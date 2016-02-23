@@ -2,7 +2,7 @@ from socket import *
 import thread
 import json
 
-HOST = 'localhost'# must be input parameter @TODO
+HOST = '192.168.0.35'# must be input parameter @TODO
 PORT = 8000 # must be input parameter @TODO
 
 testUser = "test"
