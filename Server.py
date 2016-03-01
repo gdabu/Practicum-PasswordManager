@@ -5,7 +5,7 @@ import MySQLdb
 import random
 from util import *
 
-HOST = '192.168.0.28'# must be input parameter @TODO
+HOST = '142.232.169.29'# must be input parameter @TODO
 PORT = 8000 # must be input parameter @TODO
 
 
@@ -48,17 +48,17 @@ def handler(clientsock, addr, db):
                     # insert registered username and password
                     cursor.execute("insert into users (username, password) values ('" + commandData['username'] + "', '" + commandData['password'] + "')")
                     db.commit()
-                    clientsock.sendall("Registration Successfull")
+                    sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Successfull")
 
                 # catch exception for when username is already taken
                 except MySQLdb.IntegrityError, e:
                     
                     # 1062 is the error number for inserting and already existing primary key value.
                     if not e[0] == 1062:
-                        clientsock.sendall("Registration Unsuccessfull")
+                        sendFormattedJsonMessage(clientsock, "REGISTER", 400, "Registration Unsuccessfull")
                         raise
                     else:
-                        clientsock.sendall("Registration Unsuccessfull: Username already taken")
+                        sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Unsuccessfull")
                         print "Username already taken"
                         db.rollback()
                 continue
@@ -74,7 +74,7 @@ def handler(clientsock, addr, db):
 
                 if len(user) == 0:
                     print "User not found"
-                    clientsock.sendall("LOGIN Unsuccessfull")
+                    sendFormattedJsonMessage(clientsock, "LOGIN", 400, "LOGIN Unsuccessfull: USER NOT FOUND")
                 else:
                     print "user found"
                     for row in user:
@@ -84,6 +84,7 @@ def handler(clientsock, addr, db):
                                 loggedIn = True
                                 loggedInUser = row[0]
                                 sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'FALSE'})
+                                
                             else:
                                 
                                 attemptedLogUser = row[0]
@@ -94,8 +95,8 @@ def handler(clientsock, addr, db):
                                 
 
                                 # TODO: SEND CLIENT 2FA PROMPT
-                                sendFormattedJsonMessage(clientsock, "LOGIN", 401, "LOGIN Unsuccessfull: 2FA REQUIRED", {'tfa_enabled':'TRUE'})
-                            
+                                sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Unsuccessfull: 2FA REQUIRED", {'tfa_enabled':'TRUE'})
+                                break
 
                         else:
                             print "Wrong Password"
@@ -111,19 +112,21 @@ def handler(clientsock, addr, db):
 
                 user = cursor.fetchall()
 
-                for row in user:
-                    print row[3]
-                    print commandData['secret']
-                    if row[3] == commandData['secret']:
-                        loggedIn = True
-                        loggedInUser = row[0]
-                        sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'TRUE'})
-                        break
-                    else:
-                        sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 404, "LOGIN Unsuccessfull: WRONG SECRET")
-                        break
-                continue
 
+                try:
+                    for row in user:
+                        if row[3] == int(commandData['secret']):
+                            loggedIn = True
+                            loggedInUser = row[0]
+                            sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'TRUE'})
+                            break
+                        else:
+                            sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 404, "LOGIN Unsuccessfull: WRONG SECRET")
+                            break
+                except ValueError, e:
+                    sendFormattedJsonMessage(clientsock, "ERROR", 900, "LOGIN Unsuccessfull: NAN")
+
+                continue
 
 
             # 
@@ -136,16 +139,19 @@ def handler(clientsock, addr, db):
                     tfa_enabled = 1
 
                 try:
+
                     cursor.execute("update users set tfa_enabled=" + `tfa_enabled` + " where username='" +loggedInUser+ "'" )
                     db.commit()
-                    if tfa_enabled == 0:
-                        clientsock.sendall("2fa disabled")
+                    print "tfa_enabled: " + `tfa_enabled`
+                    if tfa_enabled == 1:
+                        sendFormattedJsonMessage(clientsock, "2FA_ENABLE", 200, "2Factor Auth Enabled")
                     else:
-                        clientsock.sendall("2fa enabled")
+                        sendFormattedJsonMessage(clientsock, "2FA_ENABLE", 200, "2Factor Auth Disabled")
+                
                 except error, e:
                     print e
                     db.rollback()
-                    clientsock.sendall("2fa was not enabled/disabled")
+                    sendFormattedJsonMessage(clientsock, "2FA_ENABLE", 400, "2FA_ENABLE Unsuccessfull: Unable to Enable/Disable 2FA")
 
                 continue
 
@@ -153,30 +159,32 @@ def handler(clientsock, addr, db):
             # 
             # Login
             # 
-            elif data.rstrip() == "SYNC" and loggedIn == True:
+            elif command == "SYNC" and loggedIn == True:
                 clientsock.sendall(data)
                 continue
 
             # 
             # CRUD
             # 
-            elif data.rstrip() == "CRUD" and loggedIn == True:
+            elif command == "CRUD" and loggedIn == True:
                 clientsock.sendall(data)
                 continue
 
             # 
             # NOT LOGGED IN
             # 
-            elif (data.rstrip() == "SYNC" or data.rstrip() == "CRUD") and loggedIn == False:
+            elif (command == "SYNC" or command == "CRUD") and loggedIn == False:
                 print addr, "- Not Logged In"
-                clientsock.sendall(data)
+                sendFormattedJsonMessage(clientsock, command, 400, "COMMAND Unsuccessfull: You must be logged in")
                 continue
 
             # 
             # Logout
             # 
-            elif command == "LOGOUT" and loggedIn == True:
+            elif command == "LOGOUT":
                 loggedIn = False
+                loggedInUser = ""
+                attemptedLogUser = ""
                 print addr, " - Logged Out"
                 break;
 
@@ -184,7 +192,7 @@ def handler(clientsock, addr, db):
             # Invalid Command
             # 
             else:
-                clientsock.sendall(data)
+                sendFormattedJsonMessage(clientsock, "ERROR", 901, "Not A Valid Command")
                 print "not a command"
                 continue
 

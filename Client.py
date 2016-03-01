@@ -3,7 +3,7 @@ import sys
 import json
 
 
-def clientHandler():
+def onlineHandler(sock):
 
     commandData = ""
 
@@ -37,10 +37,12 @@ def clientHandler():
                     else:
                         print "Invalid Option"
 
-            
-
             elif command == "SYNC":
-                commandData = json.dumps({"action" : "SYNC", "username":userName, "password":userPassword})
+                commandData = json.dumps({"action" : "SYNC"})
+                sock.sendall(commandData)
+
+            elif command == "CRUD":
+                commandData = json.dumps({"action" : "CRUD"})
                 sock.sendall(commandData)
 
             elif command == "LOGOUT":
@@ -69,32 +71,51 @@ def clientHandler():
                     response = respData['action']
 
                     if response == "LOGIN":
-                        if respData['additional']['tfa_enabled'] == "TRUE":
-                            print respData['message']
+                        
+                        if respData['status'] == 200:    
 
-                            secret = raw_input('Enter 2FA Secret :')
-                            commandData = json.dumps({"action" : "2FA_LOGIN", "secret" : secret})
-                            sock.sendall(commandData)
+                            if respData['additional']['tfa_enabled'] == "TRUE":
+                                print respData['message']
 
+                                secret = raw_input('Enter 2FA Secret :')
+                                commandData = json.dumps({"action" : "2FA_LOGIN", "secret" : secret})
+                                sock.sendall(commandData)
 
+                                # Since we just sent a message, continue to remain
+                                # in listening loop
+                                continue
+                            
+                            else:
+                                print respData['message']                
+                        
                         else:
                             print respData['message']
+                        
+                    elif response == "2FA_LOGIN":
+                        print respData["message"]
 
-                    
-                    continue
+                    elif response == "ERROR":
+                        print respData["message"]
+
+                    elif response == "REGISTER":
+                        print respData['message']
+
+                    elif response == "2FA_ENABLE":
+                        print respData['message']
+
+                    elif response == "SYNC":
+                        print respData['message']
+
+                    elif response == "CRUD":
+                        print respData['message']
+
+                    # LEAVE LISTENING LOOP
+                    break
 
                 except ValueError, e:
                     print "Not returning JSON"
                     
 
-                # TODO: END MESSAGE TERMINATION 
-                
-                # if data.rstrip() == "END":
-                #     break
-
-                if data: 
-                    print 'Received Response: %s' % data
-                    break
 
 
     except socket.error, e:
@@ -103,20 +124,24 @@ def clientHandler():
     finally:
         sock.close()
 
+def offlineHandler():
+    print "Connecting to local db"
+
 
 # Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 
 # Connect the socket to the port where the server is listening
 try:
-    server_address = ('192.168.0.28', 8000)
+    clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('142.232.169.29', 8000)
     print 'connecting to %s port %s' % server_address
-    sock.connect(server_address)
-    clientHandler()
+    clientSocket.connect(server_address)
+    onlineHandler(clientSocket)
 
 except socket.error, e:
     print "Raised Socket Exception: ", e
-    print "Connecting to local db"
+    offlineHandler()
 
 
 
