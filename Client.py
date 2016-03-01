@@ -22,7 +22,7 @@ def clientHandler():
             elif command == "REGISTER": 
                 userName = raw_input('Enter User Name: ')
                 userPassword = raw_input('Enter Password: ')
-                commandData = json.dumps({"action" : "REGISTER", "username":userName, "password":userPassword});   
+                commandData = json.dumps({"action" : "REGISTER", "username":userName, "password":userPassword})   
                 sock.sendall(commandData)
 
             elif command == "2FA_ENABLE":
@@ -36,6 +36,12 @@ def clientHandler():
                         break
                     else:
                         print "Invalid Option"
+
+            
+
+            elif command == "SYNC":
+                commandData = json.dumps({"action" : "SYNC", "username":userName, "password":userPassword})
+                sock.sendall(commandData)
 
             elif command == "LOGOUT":
                 commandData = json.dumps({"action" : "LOGOUT"});
@@ -58,8 +64,33 @@ def clientHandler():
                     sock.close()
                     return
 
-                if data.rstrip() == "END":
-                    break
+                try:
+                    respData = json.loads(data.rstrip());
+                    response = respData['action']
+
+                    if response == "LOGIN":
+                        if respData['additional']['tfa_enabled'] == "TRUE":
+                            print respData['message']
+
+                            secret = raw_input('Enter 2FA Secret :')
+                            commandData = json.dumps({"action" : "2FA_LOGIN", "secret" : secret})
+                            sock.sendall(commandData)
+
+
+                        else:
+                            print respData['message']
+
+                    
+                    continue
+
+                except ValueError, e:
+                    print "Not returning JSON"
+                    
+
+                # TODO: END MESSAGE TERMINATION 
+                
+                # if data.rstrip() == "END":
+                #     break
 
                 if data: 
                     print 'Received Response: %s' % data

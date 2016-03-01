@@ -2,19 +2,22 @@ from socket import *
 import thread
 import json
 import MySQLdb
+import random
+from util import *
 
 HOST = '192.168.0.28'# must be input parameter @TODO
 PORT = 8000 # must be input parameter @TODO
 
-testUser = "test"
-testPassword = "test"
+
+# TODO: SEND BACK JSON RESPONSES TO CLIENT
 
 def handler(clientsock, addr, db):
 
     cursor = db.cursor()
-    loggedIn = True
+    loggedIn = False
 
-    loggedInUser = "test"
+    loggedInUser = ""
+    attemptedLogUser = ""
 
     try:
         while 1:
@@ -26,7 +29,7 @@ def handler(clientsock, addr, db):
                 print addr, "- Connection Closed"
                 break
 
-            print repr(addr) + " Command: " + data
+            # print repr(addr) + " Command: " + data
 
             # 
             # Command Parser
@@ -76,21 +79,57 @@ def handler(clientsock, addr, db):
                     print "user found"
                     for row in user:
                         if row[1] == commandData['password']:
-                            print "Login Successfull"
-                            loggedIn = True
-                            loggedInUser = row[0]
-                            clientsock.sendall("LOGIN Successfull")
+                            if row[2] == 0:
+                                
+                                loggedIn = True
+                                loggedInUser = row[0]
+                                sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'FALSE'})
+                            else:
+                                
+                                attemptedLogUser = row[0]
+                                print "2FA Login Required"
+                                secret = random.randint(10000,99999)
+                                cursor.execute("update users set tfa_secret=" + `secret` + " where username='" + row[0] + "'" )
+                                db.commit()
+                                
+
+                                # TODO: SEND CLIENT 2FA PROMPT
+                                sendFormattedJsonMessage(clientsock, "LOGIN", 401, "LOGIN Unsuccessfull: 2FA REQUIRED", {'tfa_enabled':'TRUE'})
+                            
+
                         else:
                             print "Wrong Password"
-                            clientsock.sendall("LOGIN Unsuccessfull")
+                            sendFormattedJsonMessage(clientsock, "LOGIN", 402, "LOGIN Unsuccessfull: WRONG PASSWORD")
                         break
                 continue
 
             # 
-            # 2FA_ENABLE
+            # 2FA_LOGIN
             # 
+            elif command == "2FA_LOGIN":
+                cursor.execute("select * from users where username = '" + attemptedLogUser + "'" )
+
+                user = cursor.fetchall()
+
+                for row in user:
+                    print row[3]
+                    print commandData['secret']
+                    if row[3] == commandData['secret']:
+                        loggedIn = True
+                        loggedInUser = row[0]
+                        sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'TRUE'})
+                        break
+                    else:
+                        sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 404, "LOGIN Unsuccessfull: WRONG SECRET")
+                        break
+                continue
+
+
+
+            # 
+            # 2FA_ENABLE
+            #
             elif command == "2FA_ENABLE" and loggedIn == True:
-                
                 tfa_enabled = 0
                 
                 if commandData['enabled'] == "TRUE":
@@ -99,8 +138,10 @@ def handler(clientsock, addr, db):
                 try:
                     cursor.execute("update users set tfa_enabled=" + `tfa_enabled` + " where username='" +loggedInUser+ "'" )
                     db.commit()
-                    if tfa_enabled 
-                    clientsock.sendall("2fa enabled/disabled")
+                    if tfa_enabled == 0:
+                        clientsock.sendall("2fa disabled")
+                    else:
+                        clientsock.sendall("2fa enabled")
                 except error, e:
                     print e
                     db.rollback()
