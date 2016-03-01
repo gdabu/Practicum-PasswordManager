@@ -128,20 +128,17 @@ def offlineHandler():
     print "Connecting to local db"
 
 
-# Create a TCP/IP socket
+if __name__=='__main__':
+    try:
+        clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = ('142.232.169.29', 8000)
+        print 'connecting to %s port %s' % server_address
+        clientSocket.connect(server_address)
+        onlineHandler(clientSocket)
 
-
-# Connect the socket to the port where the server is listening
-try:
-    clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ('142.232.169.29', 8000)
-    print 'connecting to %s port %s' % server_address
-    clientSocket.connect(server_address)
-    onlineHandler(clientSocket)
-
-except socket.error, e:
-    print "Raised Socket Exception: ", e
-    offlineHandler()
+    except socket.error, e:
+        print "Raised Socket Exception: ", e
+        offlineHandler()
 
 
 
