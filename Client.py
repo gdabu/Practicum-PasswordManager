@@ -1,9 +1,11 @@
+import sys
 import socket
 import sys
 import json
+import MySQLdb
 
 
-def onlineHandler(sock):
+def onlineHandler(sock, db):
 
     commandData = ""
 
@@ -109,36 +111,92 @@ def onlineHandler(sock):
                     elif response == "CRUD":
                         print respData['message']
 
+                    else:
+                        print "Not A Valid Response"
                     # LEAVE LISTENING LOOP
                     break
 
                 except ValueError, e:
                     print "Not returning JSON"
                     
-
-
-
     except socket.error, e:
         print "Raised Socket Exception: ", e
 
     finally:
         sock.close()
 
-def offlineHandler():
-    print "Connecting to local db"
+def offlineHandler(db):
 
+    cursor = db.cursor()
+    loggedIn = False
+    loggedInUser = ""
+
+    while 1:
+
+        # send command
+        command = raw_input('Enter Command: ')
+        
+        if command == "LOGIN":
+            userName = raw_input('Enter User Name: ')
+            userPassword = raw_input('Enter Password: ')
+
+            cursor.execute("select * from users where username = '" + userName + "'")
+            user = cursor.fetchall()
+
+            if len(user) == 0:
+                print "User not found"
+            else:
+                for row in user:
+                    if row[1] == userPassword:
+                        print "LOGGED IN SUCCESSFULLY"
+                        loggedIn = True
+                        loggedInUser = row[0]
+                    else:
+                        print "Wrong Password"
+                    break
+            continue
+
+        elif command == "CRUD" and loggedIn == True:
+            # TODO: CRUD
+            print "Not yet implemented: CRUD"
+            continue
+
+        elif command == "LOGOUT" and loggedIn == True:
+            loggedIn = False
+            loggedInUser = ""
+            print "Exiting Program. Bye!"
+            sys.exit()
+
+        else:
+            print "not a command"
+            continue
 
 if __name__=='__main__':
+
+    db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
+
+    connection = raw_input("Make Connection [ONLINE/OFFLINE]:")
+
     try:
-        clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('142.232.169.29', 8000)
-        print 'connecting to %s port %s' % server_address
-        clientSocket.connect(server_address)
-        onlineHandler(clientSocket)
+
+        if connection == "ONLINE":
+
+            clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_address = ('192.168.0.28', 8000)
+            print 'connecting to %s port %s' % server_address
+            clientSocket.connect(server_address)
+            onlineHandler(clientSocket, db)
+
+        elif connection == "OFFLINE":
+            offlineHandler(db)
+
+        else:
+            sys.exit()
 
     except socket.error, e:
         print "Raised Socket Exception: ", e
-        offlineHandler()
+        print "Could"
+        offlineHandler(db)
 
 
 

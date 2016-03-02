@@ -5,7 +5,7 @@ import MySQLdb
 import random
 from util import *
 
-HOST = '142.232.169.29'# must be input parameter @TODO
+HOST = '192.168.0.28'# must be input parameter @TODO
 PORT = 8000 # must be input parameter @TODO
 
 
@@ -15,8 +15,8 @@ def handler(clientsock, addr, db):
 
     cursor = db.cursor()
     loggedIn = False
-
     loggedInUser = ""
+    # @param attemptedLogUser - the user who is attempting to log in, used for 2FA login
     attemptedLogUser = ""
 
     try:
@@ -42,7 +42,6 @@ def handler(clientsock, addr, db):
             # 
             if command == "REGISTER":
 
-
                 try: 
                     
                     # insert registered username and password
@@ -61,6 +60,7 @@ def handler(clientsock, addr, db):
                         sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Unsuccessfull")
                         print "Username already taken"
                         db.rollback()
+                
                 continue
 
             # 
@@ -102,16 +102,17 @@ def handler(clientsock, addr, db):
                             print "Wrong Password"
                             sendFormattedJsonMessage(clientsock, "LOGIN", 402, "LOGIN Unsuccessfull: WRONG PASSWORD")
                         break
+
                 continue
 
             # 
             # 2FA_LOGIN
             # 
             elif command == "2FA_LOGIN":
+
                 cursor.execute("select * from users where username = '" + attemptedLogUser + "'" )
 
                 user = cursor.fetchall()
-
 
                 try:
                     for row in user:
@@ -127,7 +128,6 @@ def handler(clientsock, addr, db):
                     sendFormattedJsonMessage(clientsock, "ERROR", 900, "LOGIN Unsuccessfull: NAN")
 
                 continue
-
 
             # 
             # 2FA_ENABLE
@@ -154,7 +154,6 @@ def handler(clientsock, addr, db):
                     sendFormattedJsonMessage(clientsock, "2FA_ENABLE", 400, "2FA_ENABLE Unsuccessfull: Unable to Enable/Disable 2FA")
 
                 continue
-
             
             # 
             # Login
