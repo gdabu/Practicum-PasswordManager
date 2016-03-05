@@ -3,11 +3,18 @@ import socket
 import sys
 import json
 import MySQLdb
+import ast
 
 
+
+# 
+# Online Handler for all remote activity
+# 
 def onlineHandler(sock, db):
 
     commandData = ""
+
+    passwordList = []
 
     try:
         while 1:
@@ -44,7 +51,25 @@ def onlineHandler(sock, db):
                 sock.sendall(commandData)
 
             elif command == "CRUD":
-                commandData = json.dumps({"action" : "CRUD"})
+
+                crudCommand = raw_input('Enter CRUD Command [CREATE/READ/UPDATE/DELETE]: ')
+
+                if crudCommand == "CREATE":
+                    commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE"})
+                    print crudCommand
+                elif crudCommand == "READ":
+                    commandData = json.dumps({"action" : "CRUD", "subaction" : "READ"})
+                    print crudCommand
+                elif crudCommand == "UDPATE":
+                    commandData = json.dumps({"action" : "CRUD", "subaction" : "UPDATE"})
+                    print crudCommand
+                elif crudCommand == "DELETE":
+                    commandData = json.dumps({"action" : "CRUD", "subaction" : "DELETE"})
+                    print crudCommand
+                else:
+                    print "Invalid CRUD command - ", crudCommand
+                    continue
+
                 sock.sendall(commandData)
 
             elif command == "LOGOUT":
@@ -74,8 +99,10 @@ def onlineHandler(sock, db):
 
                     if response == "LOGIN":
                         
+                        # 200 STATUS CODE MEANS SUCCESSFULL LOGIN
                         if respData['status'] == 200:    
 
+                            # CHECK FOR 2FA REQUIREMENT
                             if respData['additional']['tfa_enabled'] == "TRUE":
                                 print respData['message']
 
@@ -87,14 +114,26 @@ def onlineHandler(sock, db):
                                 # in listening loop
                                 continue
                             
+                            # IF 2FA IS NOT REQUIRED THEN YOUVE LOGGED IN SUCCESSFULLY
                             else:
+                                # LOGGED IN SUCCESSFULLY
+                                # TODO : upon successfull login make READ request
                                 print respData['message']                
                         
                         else:
+                            # unsuccessful login
                             print respData['message']
                         
                     elif response == "2FA_LOGIN":
-                        print respData["message"]
+                        if respData['status'] == 200:
+                            # successfull login
+                            print "SUCCESSFULLY LOGGED IN"
+                            print respData["message"]
+
+                            # TODO : upon successfull login make READ request
+
+                        else:
+                            print "UNSUCCESSFULL LOG IN"
 
                     elif response == "ERROR":
                         print respData["message"]
@@ -108,8 +147,24 @@ def onlineHandler(sock, db):
                     elif response == "SYNC":
                         print respData['message']
 
+                    # TODO : prevent user from performing crud if not logged in 
                     elif response == "CRUD":
-                        print respData['message']
+
+                        if respData['additional']['subaction'] == "READ":
+
+                            passwordList = ast.literal_eval(respData['additional']['passwords'])
+
+                            for password in passwordList:
+                                 print password
+
+                        elif respData['additional']['subaction'] == "CREATE":
+                            print "TODO : CREATE"
+                        elif respData['additional']['subaction'] == "DELETE":
+                            print "TODO : DELETE"
+                        elif respData['additional']['subaction'] == "UPDATE":
+                            print "TODO : UPDATE"
+                        else:
+                            print "not a valid command"
 
                     else:
                         print "Not A Valid Response"
@@ -125,6 +180,9 @@ def onlineHandler(sock, db):
     finally:
         sock.close()
 
+# 
+# Offline Handler for all local activity
+# 
 def offlineHandler(db):
 
     cursor = db.cursor()

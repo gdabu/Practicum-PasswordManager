@@ -3,7 +3,9 @@ import thread
 import json
 import MySQLdb
 import random
+import bcrypt
 from util import *
+
 
 HOST = '192.168.0.28'# must be input parameter @TODO
 PORT = 8000 # must be input parameter @TODO
@@ -14,6 +16,12 @@ PORT = 8000 # must be input parameter @TODO
 def handler(clientsock, addr, db):
 
     cursor = db.cursor()
+
+    # TEST PARAMETERS
+    # loggedIn = TRUE
+    # loggedInUser = "testt"
+    # attemptedLogUser = "testt"
+
     loggedIn = False
     loggedInUser = ""
     # @param attemptedLogUser - the user who is attempting to log in, used for 2FA login
@@ -44,8 +52,10 @@ def handler(clientsock, addr, db):
 
                 try: 
                     
+                    plaintextPassword = commandData['password'].encode('utf-8')
+                    hashedPassword = bcrypt.hashpw(plaintextPassword, bcrypt.gensalt())
                     # insert registered username and password
-                    cursor.execute("insert into users (username, password) values ('" + commandData['username'] + "', '" + commandData['password'] + "')")
+                    cursor.execute("insert into users (username, password) values ('" + commandData['username'] + "', '" + hashedPassword + "')")
                     db.commit()
                     sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Successfull")
 
@@ -71,6 +81,8 @@ def handler(clientsock, addr, db):
                 cursor.execute("select * from users where username = '" + commandData['username'] + "'" )
 
                 user = cursor.fetchall()
+                attemptedPassword = commandData['password'].encode('utf-8')
+
 
                 if len(user) == 0:
                     print "User not found"
@@ -78,7 +90,9 @@ def handler(clientsock, addr, db):
                 else:
                     print "user found"
                     for row in user:
-                        if row[1] == commandData['password']:
+                        if row[1] == bcrypt.hashpw(attemptedPassword, row[1]):
+                            
+                            # CHECK FOR 2FA REQUIREMENT
                             if row[2] == 0:
                                 
                                 loggedIn = True
@@ -108,7 +122,9 @@ def handler(clientsock, addr, db):
             # 
             # 2FA_LOGIN
             # 
-            elif command == "2FA_LOGIN":
+            # USER should only be able to make a 2FA_LOGIN attempt if they have logged in with a correct user password combo 
+            # 
+            elif command == "2FA_LOGIN" and attemptedLogUser != "":
 
                 cursor.execute("select * from users where username = '" + attemptedLogUser + "'" )
 
@@ -166,7 +182,45 @@ def handler(clientsock, addr, db):
             # CRUD
             # 
             elif command == "CRUD" and loggedIn == True:
-                clientsock.sendall(data)
+
+                if commandData['subaction'] == "CREATE":
+                    print commandData
+                    sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
+
+                elif commandData['subaction'] == "READ":
+
+                    cursor.execute("select * from passwords where username = '" + loggedInUser + "'" )
+                    passwords = cursor.fetchall()
+
+                    passwordList = []
+
+                    for row in passwords:
+                        passwordList.append({ 
+                            "id" : row[0],
+                            "username" :  row[1],
+                            "account" :  row[2],
+                            "password" :  row[3]
+                        })
+
+                    print passwordList
+                    db.commit()
+
+                    sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : str(passwordList)})
+                    continue
+
+                elif commandData['subaction'] == "UPDATE":
+                    print commandData
+                    sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
+                
+                elif commandData['subaction'] == "DELETE":
+                    print commandData
+                    sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
+                
+                else:
+                    print "Not a Valid Crud Command"
+                    sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
+
+                
                 continue
 
             # 
