@@ -82,7 +82,7 @@ def handler(clientsock, addr, db):
 
                 user = cursor.fetchall()
                 attemptedPassword = commandData['password'].encode('utf-8')
-
+                db.commit()
 
                 if len(user) == 0:
                     print "User not found"
@@ -184,6 +184,10 @@ def handler(clientsock, addr, db):
             elif command == "CRUD" and loggedIn == True:
 
                 if commandData['subaction'] == "CREATE":
+                    # TODO : DB ERROR HANDLING
+                    cursor.execute("insert into passwords (username, account, password) values ('" + loggedInUser + "', '" + commandData['entry']['account'] + "', '" + commandData['entry']['accountPassword'] + "')" )
+                    db.commit()
+
                     print commandData
                     sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
 
@@ -209,10 +213,40 @@ def handler(clientsock, addr, db):
                     continue
 
                 elif commandData['subaction'] == "UPDATE":
+                    try:
+                        int(commandData['entry']['id'])
+                        pass
+                    except ValueError, e:
+                        sendFormattedJsonMessage(clientsock, command, 400, "ERROR: INVALID ID", {'subaction' : commandData['subaction']})
+                        continue
+                    else:
+                        pass
+                    finally:
+                        pass
+
+                    print commandData
+                    print "update passwords set `" + commandData['entry']['column'] + "`=`" + commandData['entry']['newValue'] + "` where id = " + `int(commandData['entry']['id'])` + " and username = '" + loggedInUser + "'"
+                    cursor.execute("update passwords set " + commandData['entry']['column'] + "='" + commandData['entry']['newValue'] + "' where id = " + `int(commandData['entry']['id'])` + " and username = '" + loggedInUser + "'")
+                    db.commit()
+
                     print commandData
                     sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
                 
                 elif commandData['subaction'] == "DELETE":
+                    try:
+                        int(commandData['entry']['id'])
+                        pass
+                    except ValueError, e:
+                        sendFormattedJsonMessage(clientsock, command, 400, "ERROR: INVALID ID", {'subaction' : commandData['subaction']})
+                        continue
+                    else:
+                        pass
+                    finally:
+                        pass
+
+                    cursor.execute("delete from passwords where id = " + `int(commandData['entry']['id'])` + " and username = '" + loggedInUser + "'")
+                    db.commit()
+
                     print commandData
                     sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
                 

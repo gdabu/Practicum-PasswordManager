@@ -13,7 +13,7 @@ import ast
 def onlineHandler(sock, db):
 
     commandData = ""
-
+    loggedIn = False
     passwordList = []
 
     try:
@@ -34,10 +34,10 @@ def onlineHandler(sock, db):
                 commandData = json.dumps({"action" : "REGISTER", "username":userName, "password":userPassword})   
                 sock.sendall(commandData)
 
-            elif command == "2FA_ENABLE":
+            elif command == "2FA_ENABLE" and loggedIn == True:
                 while True:
-                    enabled = raw_input('Enable 2FA [TRUE/FALSE/CANCEL]:')
-                    if enabled == "TRUE" or enabled == "FALSE":
+                    enabled = raw_input('Enable 2FA [True/FALSE/CANCEL]:')
+                    if enabled == "True" or enabled == "FALSE":
                         commandData = json.dumps({"action" : "2FA_ENABLE", "enabled" : enabled})
                         sock.sendall(commandData)
                         break
@@ -46,26 +46,44 @@ def onlineHandler(sock, db):
                     else:
                         print "Invalid Option"
 
-            elif command == "SYNC":
+            elif command == "SYNC" and loggedIn == True:
                 commandData = json.dumps({"action" : "SYNC"})
                 sock.sendall(commandData)
 
-            elif command == "CRUD":
+            elif command == "CRUD" and loggedIn == True:
 
                 crudCommand = raw_input('Enter CRUD Command [CREATE/READ/UPDATE/DELETE]: ')
 
                 if crudCommand == "CREATE":
-                    commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE"})
+                    account = raw_input('Enter Account Name: ')
+                    accountPassword = raw_input('Enter Password: ')
+                    commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE", "entry" : {"account" : account, "accountPassword" : accountPassword}})
                     print crudCommand
+
                 elif crudCommand == "READ":
+                    
                     commandData = json.dumps({"action" : "CRUD", "subaction" : "READ"})
                     print crudCommand
-                elif crudCommand == "UDPATE":
-                    commandData = json.dumps({"action" : "CRUD", "subaction" : "UPDATE"})
+
+                elif crudCommand == "UPDATE":
+                    
+                    entryId = raw_input('Enter Entry ID Number: ')
+                    column = raw_input('Which value would you like to change [account/password]: ')
+                    newValue = raw_input('Enter new Value: ')
+
+                    if column != "account" and column != "password":
+                        print "You can only change account or password"
+                        continue
+
+                    commandData = json.dumps({"action" : "CRUD", "subaction" : "UPDATE", "entry" : {"id" : entryId, "column" : column, "newValue" : newValue}})
                     print crudCommand
+
                 elif crudCommand == "DELETE":
-                    commandData = json.dumps({"action" : "CRUD", "subaction" : "DELETE"})
+
+                    entryId = raw_input('Enter Entry ID Number: ')
+                    commandData = json.dumps({"action" : "CRUD", "subaction" : "DELETE", "entry" : {"id" : entryId}})
                     print crudCommand
+
                 else:
                     print "Invalid CRUD command - ", crudCommand
                     continue
@@ -73,11 +91,13 @@ def onlineHandler(sock, db):
                 sock.sendall(commandData)
 
             elif command == "LOGOUT":
+                loggedIn = False
+                passwordList = []
                 commandData = json.dumps({"action" : "LOGOUT"});
                 sock.sendall(commandData)
                 
             else:
-                print "Not A Command"
+                print "Not A VALID Command"
                 continue
 
 
@@ -103,7 +123,7 @@ def onlineHandler(sock, db):
                         if respData['status'] == 200:    
 
                             # CHECK FOR 2FA REQUIREMENT
-                            if respData['additional']['tfa_enabled'] == "TRUE":
+                            if respData['additional']['tfa_enabled'] == "True":
                                 print respData['message']
 
                                 secret = raw_input('Enter 2FA Secret :')
@@ -118,7 +138,8 @@ def onlineHandler(sock, db):
                             else:
                                 # LOGGED IN SUCCESSFULLY
                                 # TODO : upon successfull login make READ request
-                                print respData['message']                
+                                print respData['message']
+                                loggedIn = True                
                         
                         else:
                             # unsuccessful login
@@ -129,6 +150,7 @@ def onlineHandler(sock, db):
                             # successfull login
                             print "SUCCESSFULLY LOGGED IN"
                             print respData["message"]
+                            loggedIn = True
 
                             # TODO : upon successfull login make READ request
 
@@ -158,11 +180,12 @@ def onlineHandler(sock, db):
                                  print password
 
                         elif respData['additional']['subaction'] == "CREATE":
-                            print "TODO : CREATE"
+                            print respData
+                            
                         elif respData['additional']['subaction'] == "DELETE":
-                            print "TODO : DELETE"
+                            print respData
                         elif respData['additional']['subaction'] == "UPDATE":
-                            print "TODO : UPDATE"
+                            print respData
                         else:
                             print "not a valid command"
 
@@ -178,6 +201,7 @@ def onlineHandler(sock, db):
         print "Raised Socket Exception: ", e
 
     finally:
+        loggedIn = False
         sock.close()
 
 # 
@@ -222,6 +246,7 @@ def offlineHandler(db):
         elif command == "LOGOUT" and loggedIn == True:
             loggedIn = False
             loggedInUser = ""
+
             print "Exiting Program. Bye!"
             sys.exit()
 
