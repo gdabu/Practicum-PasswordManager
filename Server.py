@@ -5,6 +5,7 @@ import MySQLdb
 import random
 import bcrypt
 from util import *
+import ast
 
 
 HOST = '192.168.0.28'# must be input parameter @TODO
@@ -29,9 +30,9 @@ def handler(clientsock, addr, db):
 
     try:
         while 1:
-
+            
             data = clientsock.recv(4096)
-
+            
             # if client disconnects
             if not data:
                 print addr, "- Connection Closed"
@@ -42,7 +43,7 @@ def handler(clientsock, addr, db):
             # 
             # Command Parser
             # 
-            commandData = json.loads(data.rstrip());
+            commandData = json.loads(data.rstrip())
             command = commandData['action']
 
             # 
@@ -175,7 +176,61 @@ def handler(clientsock, addr, db):
             # Login
             # 
             elif command == "SYNC" and loggedIn == True:
-                clientsock.sendall(data)
+                print commandData
+
+                if commandData['subaction'] == "PUSH":
+                    cursor.execute("delete from passwords where username='" +loggedInUser+ "'" )
+                    pushPasswordData = ast.literal_eval(commandData['passwords'])
+                    
+                    for password in pushPasswordData:
+                        cursor.execute("insert into passwords (username, account, password) values ('" + loggedInUser + "', '" + password['account'] + "', '" + password['password'] + "')" )
+
+                    db.commit()
+
+                    sendFormattedJsonMessage(clientsock, "SYNC", 200, "PUSH Successfull", {'subaction' : commandData['subaction']})
+
+                elif commandData['subaction'] == "PULL":
+                    cursor.execute("select * from passwords where username = '" + loggedInUser + "'" )
+                    passwords = cursor.fetchall()
+
+                    passwordList = []
+
+                    for row in passwords:
+                        passwordList.append({ 
+                            "id" : row[0],
+                            "username" :  row[1],
+                            "account" :  row[2],
+                            "password" :  row[3]
+                        })
+
+                    print passwordList
+                    db.commit()
+
+                    sendFormattedJsonMessage(clientsock, command, 200, "PULL EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : str(passwordList)})
+                
+                elif commandData['subaction'] == "DIFF":
+
+                    cursor.execute("select * from passwords where username = '" + loggedInUser + "'" )
+                    passwords = cursor.fetchall()
+
+                    passwordList = []
+
+                    for row in passwords:
+                        passwordList.append({ 
+                            "id" : row[0],
+                            "username" :  row[1],
+                            "account" :  row[2],
+                            "password" :  row[3]
+                        })
+
+                    print passwordList
+                    db.commit()
+
+                    sendFormattedJsonMessage(clientsock, command, 200, "DIFF EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : str(passwordList)})
+                else:
+                    print "Not a Valid SYNC Command"
+                    sendFormattedJsonMessage(clientsock, command, 400, "COMMAND EXECUTED - INVALID", {'subaction' : commandData['subaction']})
+
                 continue
 
             # 

@@ -5,8 +5,6 @@ import json
 import MySQLdb
 import ast
 
-
-
 # 
 # Online Handler for all remote activity
 # 
@@ -15,6 +13,10 @@ def onlineHandler(sock, db):
     commandData = ""
     loggedIn = False
     passwordList = []
+    attemptedLogUser = ""
+    loggedInUser = ""
+
+    cursor = db.cursor()
 
     try:
         while 1:
@@ -25,8 +27,10 @@ def onlineHandler(sock, db):
             if command == "LOGIN":
                 userName = raw_input('Enter User Name: ')
                 userPassword = raw_input('Enter Password: ')
+                attemptedLogUser = userName
                 commandData = json.dumps({"action" : "LOGIN", "username":userName, "password":userPassword})
                 sock.sendall(commandData)
+
 
             elif command == "REGISTER": 
                 userName = raw_input('Enter User Name: ')
@@ -47,8 +51,39 @@ def onlineHandler(sock, db):
                         print "Invalid Option"
 
             elif command == "SYNC" and loggedIn == True:
-                commandData = json.dumps({"action" : "SYNC"})
+
+                syncCommand = raw_input('Enter SYNC Command [PUSH/PULL/DIFF]: ')
+
+                if syncCommand == "PUSH":
+                    print loggedInUser
+                    cursor.execute("select * from passwords where username = '" + loggedInUser + "'" )
+                    passwords = cursor.fetchall()
+                    print passwords
+                    passwordList = []
+
+                    for row in passwords:
+                        passwordList.append({
+                            "id" : row[0],
+                            "username" :  row[1],
+                            "account" :  row[2],
+                            "password" :  row[3]
+                        })
+
+                    print "PASSWORD LIST:" + str(passwordList)
+                    db.commit()
+                    commandData = json.dumps({"action" : "SYNC", "subaction" : "PUSH", "passwords" : str(passwordList)})
+
+                elif syncCommand == "PULL":
+                    commandData = json.dumps({"action" : "SYNC", "subaction" : "PULL"})
+                elif syncCommand == "DIFF":
+                    commandData = json.dumps({"action" : "SYNC", "subaction" : "DIFF"})
+                else:
+                    print "Invalid Sync Command"
+                    continue
+
+                
                 sock.sendall(commandData)
+
 
             elif command == "CRUD" and loggedIn == True:
 
@@ -139,6 +174,7 @@ def onlineHandler(sock, db):
                                 # LOGGED IN SUCCESSFULLY
                                 # TODO : upon successfull login make READ request
                                 print respData['message']
+                                loggedInUser = attemptedLogUser
                                 loggedIn = True                
                         
                         else:
@@ -150,6 +186,7 @@ def onlineHandler(sock, db):
                             # successfull login
                             print "SUCCESSFULLY LOGGED IN"
                             print respData["message"]
+                            loggedInUser = attemptedLogUser
                             loggedIn = True
 
                             # TODO : upon successfull login make READ request
@@ -167,7 +204,43 @@ def onlineHandler(sock, db):
                         print respData['message']
 
                     elif response == "SYNC":
-                        print respData['message']
+                        if respData['additional']['subaction'] == "PUSH":
+                            print respData['message']
+
+                        elif respData['additional']['subaction'] == "PULL":
+                            print respData['message']
+                            respData['additional']['passwords']
+
+                            cursor.execute("delete from passwords where username='" +loggedInUser+ "'" )
+                            pushPasswordData = ast.literal_eval(respData['additional']['passwords'])
+                            
+                            for password in pushPasswordData:
+                                cursor.execute("insert into passwords (username, account, password) values ('" + loggedInUser + "', '" + password['account'] + "', '" + password['password'] + "')" )
+
+                            db.commit()
+
+                        elif respData['additional']['subaction'] == "DIFF":
+                            print respData['message']
+                            cursor.execute("select * from passwords where username = '" + loggedInUser + "'" )
+                            passwords = cursor.fetchall()
+                            print passwords
+                            passwordList = []
+
+                            for row in passwords:
+                                passwordList.append({
+                                    "id" : row[0],
+                                    "username" :  row[1],
+                                    "account" :  row[2],
+                                    "password" :  row[3]
+                                })
+
+                            print "LOCAL PASSWORD LIST:\n\n" + str(passwordList)
+                            db.commit()
+
+                            print "SERVER PASSWORD LIST\n\n" + respData['additional']['passwords']
+
+                        else:
+                            print "not a valid command"
 
                     # TODO : prevent user from performing crud if not logged in 
                     elif response == "CRUD":
@@ -240,7 +313,91 @@ def offlineHandler(db):
 
         elif command == "CRUD" and loggedIn == True:
             # TODO: CRUD
-            print "Not yet implemented: CRUD"
+            # 
+            # 
+        
+            crudCommand = raw_input('Enter CRUD Command [CREATE/READ/UPDATE/DELETE]: ')
+
+            if crudCommand == "CREATE":
+                account = raw_input('Enter Account Name: ')
+                accountPassword = raw_input('Enter Password: ')
+                
+                cursor.execute("insert into passwords (username, account, password) values ('" + loggedInUser + "', '" + account + "', '" + accountPassword + "')" )
+                db.commit()
+
+                print crudCommand
+
+            elif crudCommand == "READ":
+                
+                cursor.execute("select * from passwords where username = '" + loggedInUser + "'" )
+                passwords = cursor.fetchall()
+
+                passwordList = []
+
+                for row in passwords:
+                    passwordList.append({ 
+                        "id" : row[0],
+                        "username" :  row[1],
+                        "account" :  row[2],
+                        "password" :  row[3]
+                    })
+
+                print passwordList
+                db.commit()
+
+                print crudCommand
+
+            elif crudCommand == "UPDATE":
+                
+                entryId = raw_input('Enter Entry ID Number: ')
+                column = raw_input('Which value would you like to change [account/password]: ')
+                newValue = raw_input('Enter new Value: ')
+
+                if column != "account" and column != "password":
+                    print "You can only change account or password"
+                    continue
+
+                try:
+                    int(entryId)
+                    pass
+                except ValueError, e:
+                    sendFormattedJsonMessage(clientsock, command, 400, "ERROR: INVALID ID", {'subaction' : commandData['subaction']})
+                    continue
+                else:
+                    pass
+                finally:
+                    pass
+
+                
+                print "update passwords set `" + column + "`=`" + newValue + "` where id = " + `entryId` + " and username = '" + loggedInUser + "'"
+                cursor.execute("update passwords set " + column + "='" + newValue + "' where id = " + `entryId` + " and username = '" + loggedInUser + "'")
+                db.commit()
+
+                print crudCommand
+
+            elif crudCommand == "DELETE":
+
+                entryId = raw_input('Enter Entry ID Number: ')
+                
+                print crudCommand
+                try:
+                    int(entryId)
+                    pass
+                except ValueError, e:
+                    sendFormattedJsonMessage(clientsock, command, 400, "ERROR: INVALID ID", {'subaction' : commandData['subaction']})
+                    continue
+                else:
+                    pass
+                finally:
+                    pass
+
+                cursor.execute("delete from passwords where id = " + `entryId` + " and username = '" + loggedInUser + "'")
+                db.commit()
+
+            else:
+                print "Invalid CRUD command - ", crudCommand
+                continue
+            
             continue
 
         elif command == "LOGOUT" and loggedIn == True:
