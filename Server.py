@@ -58,7 +58,7 @@ def handler(clientsock, addr, db):
                     # insert registered username and password
                     cursor.execute("insert into users (username, password) values ('" + commandData['username'] + "', '" + hashedPassword + "')")
                     db.commit()
-                    sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Successfull")
+                    sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Successfull", {"username" : commandData['username'], "password" : hashedPassword})
 
                 # catch exception for when username is already taken
                 except MySQLdb.IntegrityError, e:

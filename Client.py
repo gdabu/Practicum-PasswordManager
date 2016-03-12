@@ -2,6 +2,7 @@ import sys
 import socket
 import sys
 import json
+import bcrypt
 import MySQLdb
 import ast
 
@@ -198,7 +199,14 @@ def onlineHandler(sock, db):
                         print respData["message"]
 
                     elif response == "REGISTER":
+                        if respData['status'] == 200:
+                            cursor.execute("insert into users (username, password) values ('" + respData['additional']['username'] + "', '" + respData['additional']['password'] + "')")
+                            db.commit()
+
+                            
+                            
                         print respData['message']
+
 
                     elif response == "2FA_ENABLE":
                         print respData['message']
@@ -302,7 +310,7 @@ def offlineHandler(db):
                 print "User not found"
             else:
                 for row in user:
-                    if row[1] == userPassword:
+                    if row[1] == bcrypt.hashpw(userPassword, row[1]):
                         print "LOGGED IN SUCCESSFULLY"
                         loggedIn = True
                         loggedInUser = row[0]
