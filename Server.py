@@ -6,15 +6,40 @@ import random
 import bcrypt
 from util import *
 import ast
+import logging
+
+
 
 
 HOST = '192.168.0.28'# must be input parameter @TODO
 PORT = 8000 # must be input parameter @TODO
 
+def initLogger():
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+
+    # create a file handler
+
+    handler = logging.FileHandler('/home/gdabu/Documents/Shared/logs/hello.log')
+    handler.setLevel(logging.INFO)
+
+    # create a logging format
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+
+    # add the handlers to the logger
+
+    logger.addHandler(handler)
+
+    return logger
+
+
 
 # TODO: SEND BACK JSON RESPONSES TO CLIENT
 
-def handler(clientsock, addr, db):
+def handler(clientsock, addr, db, logger):
 
     cursor = db.cursor()
 
@@ -27,6 +52,8 @@ def handler(clientsock, addr, db):
     loggedInUser = ""
     # @param attemptedLogUser - the user who is attempting to log in, used for 2FA login
     attemptedLogUser = ""
+
+    
 
     try:
         while 1:
@@ -87,9 +114,13 @@ def handler(clientsock, addr, db):
 
                 if len(user) == 0:
                     print "User not found"
+
+                    logger.warn('Login attempt to user: %s from IP %s - Invalid Username', commandData['username'], clientsock.getsockname())
+
                     sendFormattedJsonMessage(clientsock, "LOGIN", 400, "LOGIN Unsuccessfull: USER NOT FOUND")
                 else:
                     print "user found"
+                    print user
                     for row in user:
                         if row[1] == bcrypt.hashpw(attemptedPassword, row[1]):
                             
@@ -98,6 +129,7 @@ def handler(clientsock, addr, db):
                                 
                                 loggedIn = True
                                 loggedInUser = row[0]
+                                logger.info('Login to user: %s from IP %s - Successfull Login', commandData['username'], clientsock.getsockname())
                                 sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'FALSE'})
                                 
                             else:
@@ -108,13 +140,12 @@ def handler(clientsock, addr, db):
                                 cursor.execute("update users set tfa_secret=" + `secret` + " where username='" + row[0] + "'" )
                                 db.commit()
                                 
-
-                                # TODO: SEND CLIENT 2FA PROMPT
                                 sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Unsuccessfull: 2FA REQUIRED", {'tfa_enabled':'TRUE'})
                                 break
 
                         else:
                             print "Wrong Password"
+                            logger.warn('Login attempt to user: %s from IP %s - Wrong Password', commandData['username'], clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "LOGIN", 402, "LOGIN Unsuccessfull: WRONG PASSWORD")
                         break
 
@@ -136,9 +167,11 @@ def handler(clientsock, addr, db):
                         if row[3] == int(commandData['secret']):
                             loggedIn = True
                             loggedInUser = row[0]
+                            logger.warn('Login to user: %s from IP %s - Successfull Login', commandData['username'], clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'TRUE'})
                             break
                         else:
+                            logger.warn('Login attempt to user: %s from IP %s - Wrong 2FA key', commandData['username'], clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 404, "LOGIN Unsuccessfull: WRONG SECRET")
                             break
                 except ValueError, e:
@@ -280,7 +313,7 @@ def handler(clientsock, addr, db):
                         pass
 
                     print commandData
-                    print "update passwords set `" + commandData['entry']['column'] + "`=`" + commandData['entry']['newValue'] + "` where id = " + `int(commandData['entry']['id'])` + " and username = '" + loggedInUser + "'"
+                    
                     cursor.execute("update passwords set " + commandData['entry']['column'] + "='" + commandData['entry']['newValue'] + "' where id = " + `int(commandData['entry']['id'])` + " and username = '" + loggedInUser + "'")
                     db.commit()
 
@@ -332,7 +365,7 @@ def handler(clientsock, addr, db):
 
             # 
             # Invalid Command
-            # 
+            #
             else:
                 sendFormattedJsonMessage(clientsock, "ERROR", 901, "Not A Valid Command")
                 print "not a command"
@@ -353,9 +386,10 @@ if __name__=='__main__':
     serversock.listen(5)
 
     db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
+    logger = initLogger()
 
     while 1:
         print '>> Server Listening on Port: ', PORT
         clientsock, addr = serversock.accept()
         print '>> Connected to: ', addr
-        thread.start_new_thread(handler, (clientsock, addr, db))
+        thread.start_new_thread(handler, (clientsock, addr, db, logger))

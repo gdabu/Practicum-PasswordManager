@@ -32,13 +32,12 @@ def onlineHandler(sock, db):
                 commandData = json.dumps({"action" : "LOGIN", "username":userName, "password":userPassword})
                 sock.sendall(commandData)
 
-
             elif command == "REGISTER": 
                 userName = raw_input('Enter User Name: ')
                 userPassword = raw_input('Enter Password: ')
                 commandData = json.dumps({"action" : "REGISTER", "username":userName, "password":userPassword})   
                 sock.sendall(commandData)
-
+            
             elif command == "2FA_ENABLE" and loggedIn == True:
                 while True:
                     enabled = raw_input('Enable 2FA [True/FALSE/CANCEL]:')
@@ -242,10 +241,16 @@ def onlineHandler(sock, db):
                                     "password" :  row[3]
                                 })
 
-                            print "LOCAL PASSWORD LIST:\n\n" + str(passwordList)
                             db.commit()
 
-                            print "SERVER PASSWORD LIST\n\n" + respData['additional']['passwords']
+                            print "\n\nLOCAL PASSWORD LIST:\n\n"
+                            for password in ast.literal_eval(str(passwordList)):
+                                print password
+
+                            print "\n\nSERVER PASSWORD LIST\n\n"
+                            for password in ast.literal_eval(respData['additional']['passwords']):
+                                print password
+
 
                         else:
                             print "not a valid command"
@@ -426,7 +431,6 @@ if __name__=='__main__':
     connection = raw_input("Make Connection [ONLINE/OFFLINE]:")
 
     try:
-
         if connection == "ONLINE":
 
             clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
