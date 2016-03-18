@@ -2,7 +2,7 @@ import socket
 import json
 import ast
 
-HOST = '192.168.0.117'
+HOST = '192.168.0.122'
 PORT = 8000
 
 class ClientConnection():
@@ -12,13 +12,9 @@ class ClientConnection():
 
     def connect_to_server(self, ip, port):
         try:
-            print "1"
             self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print "1"
             self.server_address = (ip, port)
-            print "1"
             self.clientSocket.connect(self.server_address)
-            print "1"
             self.connection = True
         except socket.error, e:
             print "socket error: ", e
@@ -27,11 +23,9 @@ class ClientConnection():
     def print_message(self, message):
         print message
 
-
-    def send_command(self, message):        
+    def send_command(self, message):
         if self.connection:
             self.clientSocket.sendall(message)
-
 
     def receive_response(self):
         data = self.clientSocket.recv(4096)
@@ -89,9 +83,6 @@ class LoginScreen(Screen):
 
                 # self.parent.print_message(self.data)
 
-                
-                
-
         elif connectivity == False:
 
             self.username = username
@@ -101,8 +92,18 @@ class MainScreenOnline(Screen):
     loggedInUser = StringProperty('')
     passwordList = ListProperty([])
 
+    currentAccount_pw = StringProperty('')
+    currentPassword_pw = StringProperty('')
+    currentId_pw = StringProperty('')
+
     def createPasswords(self):
-        
+        try:
+            commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE", "entry" : {"account" : "fucknut", "accountPassword" : "bitchfuck"}})
+            recvJsonData = self.parent.clientConnection.send_receive(commandData)
+            self.loadPasswordList_UI()
+        except socket.error, e:
+            self.parent.clientConnection.terminate_connection()
+            self.parent.current = "login_screen"
         # self.parent.clientConnection.send_command("create")
         # self.parent.clientConnection.print_message(self.parent.clientConnection.receive_response())
         
@@ -115,26 +116,74 @@ class MainScreenOnline(Screen):
         self.passwordList = ast.literal_eval(recvJsonData['additional']['passwords'])
         print self.passwordList
 
-    def readLoadPasswords(self):
+    def onPasswordButtonClick(self, instance):
+        print('The button <%s> is being pressed' % instance.text)
+
+        self.currentAccount_pw = str(instance.pw_account)
+        self.currentId_pw = str(instance.pw_id)
+        self.currentPassword_pw = str(instance.pw_password)
+        
+        self.ids.password_info.text = "Account: {0}\nPassword: {1}".format(self.currentAccount_pw, self.currentPassword_pw)
+        
+        self.ids.password_button_container.clear_widgets()
+        # self.ids.password_info_container.add_widget
+        # self.ids.password_info_container.add_widget
+        
+
+        updateButton = Button(text="UPDATE", id="password_button_update")
+        deleteButton = Button(text="DELETE", id="password_button_delete")
+
+        updateButton.bind(on_press=self.updatePasswords)
+        deleteButton.bind(on_press=self.deletePasswords)
+
+        self.ids.password_button_container.add_widget(updateButton)
+        self.ids.password_button_container.add_widget(deleteButton)
+
+    def loadPasswordList_UI(self):
         self.readPasswords()
         self.ids.password_list.clear_widgets()
-        for password in self.passwordList:
-            passwordBtn = Button(text=password['account'])
+        for entry in self.passwordList:
+
+            passwordBtn = Button(text=entry['account'])
+
+            passwordBtn.apply_property(pw_username=StringProperty(entry['username']))
+            passwordBtn.apply_property(pw_account=StringProperty(entry['account']))
+            passwordBtn.apply_property(pw_password=StringProperty(entry['password']))
+            passwordBtn.apply_property(pw_id=StringProperty(entry['id']))
+
+            passwordBtn.bind(on_press=self.onPasswordButtonClick)
+
+
+            # TEST PRINT
+            # print passwordBtn.pw_account
+            # print passwordBtn.pw_id
+            # print passwordBtn.pw_password
+            # print passwordBtn.pw_username
+
             self.ids.password_list.add_widget(passwordBtn)
         
 
-    def updatePasswords(self):
-        
+    def updatePasswords(self, instance):
+        print "updating"
+        print self.currentAccount_pw
+        print self.currentId_pw
+        print self.currentPassword_pw
         # self.parent.clientConnection.send_command("update")
         # self.parent.clientConnection.print_message(self.parent.clientConnection.receive_response())
         
         pass
 
-    def deletePasswords(self):
-        
+    def deletePasswords(self, instance):
+        print "deleting"
+        print self.currentAccount_pw
+        print self.currentId_pw
+        print self.currentPassword_pw
         try:
-            commandData = "delete"
+            commandData = json.dumps({"action" : "CRUD", "subaction" : "DELETE", "entry" : {"id" : self.currentId_pw}})
             recvJsonData = self.parent.clientConnection.send_receive(commandData)
+            self.loadPasswordList_UI()
+            self.ids.password_button_container.clear_widgets()
+            self.ids.password_info.text = ""
         except socket.error, e:
             self.parent.clientConnection.terminate_connection()
             self.parent.current = "login_screen"
