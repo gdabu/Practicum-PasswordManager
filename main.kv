@@ -1,0 +1,227 @@
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+ScreenManagement:
+	transition: FadeTransition()
+	LoginScreen:
+        id: login_screen
+	MainScreenOnline:
+        loggedInUser: login_screen.loggedInUser
+        twoFactor_status: login_screen.twoFactor_status
+    MainScreenOffline:
+        loggedInUser: login_screen.loggedInUser
+        twoFactor_status: login_screen.twoFactor_status
+    AddPasswordScreen
+    TwoFactorLoginScreen
+
+<TwoFactorLoginScreen>:
+    name: "login_2fa_screen"
+    FloatLayout:
+        
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            padding: [100,0,100,0]
+            
+            GridLayout: 
+                cols: 1
+                orientation:'vertical'
+                row_force_default: True
+                row_default_height: '32dp'
+                size_hint_y: None
+                height: self.minimum_height
+
+                TextInput:
+                    id: secret_key
+                    multiline: False
+                    hint_text: 'Enter 2FA key'
+                
+                Label: 
+                    id: key_status
+
+                Button: 
+                    on_release: root.enterKey(secret_key.text)
+                    text: "Login"
+
+                Button:
+                    on_release: root.backToLogin()
+                    text: "< Back to Login Screen"
+
+<AddPasswordScreen>:
+    name: "add_password_screen"
+    FloatLayout:
+        
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            padding: [100,0,100,0]
+            
+            GridLayout: 
+                cols: 1
+                orientation:'vertical'
+                row_force_default: True
+                row_default_height: '32dp'
+                size_hint_y: None
+                height: self.minimum_height
+
+                TextInput:
+                    id: new_account
+                    multiline: False
+                    hint_text: 'Account'
+                
+                TextInput:
+                    id: new_password
+                    multiline: False
+                    hint_text: 'Password'
+                    password: True
+
+                Label: 
+                    id: add_password_status
+                Button: 
+                    on_release: root.addPassword(new_account.text, new_password.text)
+                    text: "ADD NEW PASSWORD"
+
+                Button:
+                    on_release: root.backToMainMenu()
+                    text: "< Back to main menu"
+
+
+<LoginScreen>:
+	name: "login_screen"
+    
+    GridLayout:
+        cols: 2
+        orientation: 'horizontal'
+        
+        AnchorLayout:
+            GridLayout: 
+                cols: 1
+                canvas.before:
+                    Color:
+                        rgba: .2,.6,.86, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                anchor_x:'center'
+                anchor_y:'center'
+                Image:
+                    source:'./img/logo.png'
+
+        AnchorLayout:
+            anchor_x:'center'
+            anchor_y:'center'
+            GridLayout: 
+                cols: 1
+                orientation:'vertical'
+                row_force_default: True
+                row_default_height: '32dp'
+                size_hint_y: None
+                height: self.minimum_height
+                padding:[50,0,50,0]
+                Switch:
+                    id: connectivity
+                    active: True
+        		
+                TextInput:
+        			id: login_user
+                    multiline: False
+                    text: "test@test.com"
+                    hint_text: 'Username'
+        		
+                TextInput:
+                    id: login_password
+                    multiline: False
+                    text: "test"
+                    hint_text: 'Password'
+                    password: True
+                
+                
+                Label:
+                    id: login_status
+                    text: root.login_status
+        		Button:	
+        			on_release: root.login(login_user.text, login_password.text,  connectivity.active)
+        			text: "LOGIN"
+
+
+
+<MainScreenOnline>:
+	name: "main_screen_online"
+    on_enter: root.loadPasswordList_UI()
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            cols: 2
+            BoxLayout:
+                orientation: 'vertical'
+                ScrollView:
+                    GridLayout:
+                        id: password_list
+                        padding: [50,50,50,50]
+                        cols: 1
+                        orientation: 'vertical'
+
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        row_force_default: True
+                        row_default_height: 100
+
+            GridLayout:
+                cols: 1
+                orientation: 'vertical' 
+                padding: [50,50,50,50]
+                GridLayout:
+                    id: password_info_container
+                    orientation: 'vertical'
+                    cols: 1
+                    row_force_default: True
+                    row_default_height: '60dp'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    Label: 
+                        text: "ONLINE: " + root.loggedInUser  
+                    Label:
+                        id: password_info
+                    Switch:
+                        id: twofactor_switch
+                        on_active: root.switchTwoFactor(self.active)
+
+                GridLayout:
+                    id: password_button_container
+                    orientation: 'horizontal'
+                    cols: 2
+                    row_force_default: True
+                    row_default_height: '32dp'
+                    size_hint_y: None
+                    height: self.minimum_height
+
+        GridLayout:
+            orientation: 'vertical'
+            row_force_default: True
+            row_default_height: '60dp'
+            size_hint_y: None
+            height: self.minimum_height
+            padding: [50,50,50,50]
+            cols: 1
+            Button: 
+                on_release: root.createPasswords()
+                text: "Add Password"
+            Button:
+                on_release: app.root.current = "login_screen"
+                background_normal:""
+                background_color:(1,0,0,1)
+                text: "LOGOUT"
+
+<MainScreenOffline>:
+    name: "main_screen_offline"
+    GridLayout:
+        cols: 1
+        padding: [100,50,100,50]
+        Label:
+            text: "OFFLINE: " + root.loggedInUser
+        Button:
+            on_release: app.root.current = "login_screen"
+            background_normal:""
+            background_color:(1,0,0,1)
+            text: "LOGOUT"

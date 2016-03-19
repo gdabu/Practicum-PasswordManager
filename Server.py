@@ -11,7 +11,7 @@ import logging
 
 
 
-HOST = '192.168.0.28'# must be input parameter @TODO
+HOST = '142.232.169.184'# must be input parameter @TODO
 PORT = 8000 # must be input parameter @TODO
 
 def initLogger():
@@ -42,11 +42,6 @@ def initLogger():
 def handler(clientsock, addr, db, logger):
 
     cursor = db.cursor()
-
-    # TEST PARAMETERS
-    # loggedIn = TRUE
-    # loggedInUser = "testt"
-    # attemptedLogUser = "testt"
 
     loggedIn = False
     loggedInUser = ""
@@ -114,7 +109,8 @@ def handler(clientsock, addr, db, logger):
 
                 if len(user) == 0:
                     print "User not found"
-
+                    print "LOGGED SHIT"
+                    logger.warn('Login attempt to user: %s from IP %s - Invalid Username', commandData['username'], clientsock.getsockname())
                     logger.warn('Login attempt to user: %s from IP %s - Invalid Username', commandData['username'], clientsock.getsockname())
 
                     sendFormattedJsonMessage(clientsock, "LOGIN", 400, "LOGIN Unsuccessfull: USER NOT FOUND")
@@ -129,22 +125,24 @@ def handler(clientsock, addr, db, logger):
                                 
                                 loggedIn = True
                                 loggedInUser = row[0]
+                                print "LOGGED SHIT"
                                 logger.info('Login to user: %s from IP %s - Successfull Login', commandData['username'], clientsock.getsockname())
-                                sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'FALSE'})
+                                sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':False})
                                 
                             else:
-                                
+                                # TODO : SEND EMAIL WITH KEY
                                 attemptedLogUser = row[0]
                                 print "2FA Login Required"
                                 secret = random.randint(10000,99999)
                                 cursor.execute("update users set tfa_secret=" + `secret` + " where username='" + row[0] + "'" )
                                 db.commit()
                                 
-                                sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Unsuccessfull: 2FA REQUIRED", {'tfa_enabled':'TRUE'})
+                                sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Unsuccessfull: 2FA REQUIRED", {'tfa_enabled':True})
                                 break
 
                         else:
                             print "Wrong Password"
+                            print "LOGGED SHIT"
                             logger.warn('Login attempt to user: %s from IP %s - Wrong Password', commandData['username'], clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "LOGIN", 402, "LOGIN Unsuccessfull: WRONG PASSWORD")
                         break
@@ -162,20 +160,23 @@ def handler(clientsock, addr, db, logger):
 
                 user = cursor.fetchall()
 
+                print commandData
+
                 try:
                     for row in user:
                         if row[3] == int(commandData['secret']):
                             loggedIn = True
                             loggedInUser = row[0]
-                            logger.warn('Login to user: %s from IP %s - Successfull Login', commandData['username'], clientsock.getsockname())
-                            sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':'TRUE'})
+                            logger.warn('Login to user: %s from IP %s - Successfull 2FA Login', loggedInUser, clientsock.getsockname())
+                            sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':True})
                             break
                         else:
-                            logger.warn('Login attempt to user: %s from IP %s - Wrong 2FA key', commandData['username'], clientsock.getsockname())
+                            logger.warn('Login attempt to user: %s from IP %s - Wrong 2FA key', attemptedLogUser, clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 404, "LOGIN Unsuccessfull: WRONG SECRET")
                             break
                 except ValueError, e:
                     sendFormattedJsonMessage(clientsock, "ERROR", 900, "LOGIN Unsuccessfull: NAN")
+
 
                 continue
 
@@ -185,7 +186,7 @@ def handler(clientsock, addr, db, logger):
             elif command == "2FA_ENABLE" and loggedIn == True:
                 tfa_enabled = 0
                 
-                if commandData['enabled'] == "TRUE":
+                if commandData['enabled'] == True:
                     tfa_enabled = 1
 
                 try:

@@ -164,7 +164,7 @@ def onlineHandler(sock, db):
                                 secret = raw_input('Enter 2FA Secret :')
                                 commandData = json.dumps({"action" : "2FA_LOGIN", "secret" : secret})
                                 sock.sendall(commandData)
-
+                                
                                 # Since we just sent a message, continue to remain
                                 # in listening loop
                                 continue
