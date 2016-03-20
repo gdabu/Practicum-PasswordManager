@@ -11,7 +11,7 @@ import logging
 
 
 
-HOST = '142.232.169.184'# must be input parameter @TODO
+HOST = '192.168.0.133'
 PORT = 8000 # must be input parameter @TODO
 
 def initLogger():

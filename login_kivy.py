@@ -2,8 +2,8 @@ import socket
 import json
 import ast
 
-# HOST = '192.168.0.28'
-HOST = '142.232.169.184'
+HOST = '192.168.0.133'
+# HOST = '142.232.169.184'
 PORT = 8000
 
 class ClientConnection():
@@ -51,6 +51,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 from kivy.uix.button import Button
 
+class RegistrationScreen(Screen):
+    pass
 class TwoFactorLoginScreen(Screen):
 
     def enterKey(self, secret):
@@ -128,7 +130,7 @@ class AddPasswordScreen(Screen):
             commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE", "entry" : {"account" : new_account, "accountPassword" : new_password}})
             recvJsonData = self.parent.clientConnection.send_receive(commandData)
             self.ids.add_password_status.text = "Password Added"
-            self.parent.current = "main_screen_online"
+            self.backToMainMenu()
 
         except socket.error, e:
             self.parent.clientConnection.terminate_connection()

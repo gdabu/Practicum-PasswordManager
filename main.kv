@@ -87,17 +87,16 @@ ScreenManagement:
 
 <LoginScreen>:
 	name: "login_screen"
-    
+
     GridLayout:
         cols: 2
-        orientation: 'horizontal'
-        
+
         AnchorLayout:
             GridLayout: 
                 cols: 1
                 canvas.before:
                     Color:
-                        rgba: .2,.6,.86, 1
+                        rgba: .196,.643,.808,1
                     Rectangle:
                         pos: self.pos
                         size: self.size
@@ -117,10 +116,8 @@ ScreenManagement:
                 size_hint_y: None
                 height: self.minimum_height
                 padding:[50,0,50,0]
-                Switch:
-                    id: connectivity
-                    active: True
-        		
+        		        
+
                 TextInput:
         			id: login_user
                     multiline: False
@@ -134,13 +131,24 @@ ScreenManagement:
                     hint_text: 'Password'
                     password: True
                 
-                
                 Label:
                     id: login_status
                     text: root.login_status
         		Button:	
         			on_release: root.login(login_user.text, login_password.text,  connectivity.active)
         			text: "LOGIN"
+                Button: 
+                    text: "REGISTER"
+
+                BoxLayout:
+                    cols: 2
+                    padding:[50,200,50,0]
+                    Label:
+                        text: "Remote Connection"
+                    Switch:
+                        id: connectivity
+                        active: True
+
 
 
 
@@ -157,7 +165,7 @@ ScreenManagement:
                 ScrollView:
                     GridLayout:
                         id: password_list
-                        padding: [50,50,50,50]
+                        padding: [0,0,50,0]
                         cols: 1
                         orientation: 'vertical'
 
@@ -170,22 +178,37 @@ ScreenManagement:
             GridLayout:
                 cols: 1
                 orientation: 'vertical' 
-                padding: [50,50,50,50]
+                
+                GridLayout:
+                    orientation: 'horizontal'
+                    cols: 2
+                    row_force_default: True
+                    row_default_height: '32dp'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: [50,50,50,50]
+                    Label: 
+                        text: "ONLINE: " 
+                    Label:
+                        text: root.loggedInUser
+                    Label:
+                        text: "2 Factor Authentication: "
+                    Switch:
+                        id: twofactor_switch
+                        on_active: root.switchTwoFactor(self.active)
                 GridLayout:
                     id: password_info_container
                     orientation: 'vertical'
                     cols: 1
                     row_force_default: True
-                    row_default_height: '60dp'
+                    row_default_height: '32dp'
                     size_hint_y: None
                     height: self.minimum_height
-                    Label: 
-                        text: "ONLINE: " + root.loggedInUser  
+                    padding: [50,50,50,50]
+
                     Label:
                         id: password_info
-                    Switch:
-                        id: twofactor_switch
-                        on_active: root.switchTwoFactor(self.active)
+
 
                 GridLayout:
                     id: password_button_container
@@ -195,23 +218,24 @@ ScreenManagement:
                     row_default_height: '32dp'
                     size_hint_y: None
                     height: self.minimum_height
-
-        GridLayout:
-            orientation: 'vertical'
-            row_force_default: True
-            row_default_height: '60dp'
-            size_hint_y: None
-            height: self.minimum_height
-            padding: [50,50,50,50]
-            cols: 1
-            Button: 
-                on_release: root.createPasswords()
-                text: "Add Password"
-            Button:
-                on_release: app.root.current = "login_screen"
-                background_normal:""
-                background_color:(1,0,0,1)
-                text: "LOGOUT"
+                    padding: [50,50,50,50]
+                RelativeLayout:
+                GridLayout:
+                    orientation: 'vertical'
+                    row_force_default: True
+                    row_default_height: '60dp'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: [50,50,50,50]
+                    cols: 1
+                    Button: 
+                        on_release: root.createPasswords()
+                        text: "Add Password"
+                    Button:
+                        on_release: app.root.current = "login_screen"
+                        background_normal:""
+                        background_color:(.196,.643,.808,1)
+                        text: "LOGOUT"
 
 <MainScreenOffline>:
     name: "main_screen_offline"
