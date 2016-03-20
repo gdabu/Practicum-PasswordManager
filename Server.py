@@ -388,7 +388,7 @@ if __name__=='__main__':
     args = cmdParser.parse_args();
 
 
-    ADDR = (args.IP, args.PORT)
+    ADDR = (args.IP, int(args.PORT))
     serversock = socket(AF_INET, SOCK_STREAM)
     serversock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serversock.bind(ADDR)
