@@ -7,6 +7,7 @@ import bcrypt
 from util import *
 import ast
 import logging
+import argparse
 
 
 
@@ -380,7 +381,14 @@ def handler(clientsock, addr, db, logger):
         clientsock.close()
 
 if __name__=='__main__':
-    ADDR = (HOST, PORT)
+
+    cmdParser = argparse.ArgumentParser(description="8505A1-CovertChannel Client")
+    cmdParser.add_argument('-i','--IP',IP='IP', help='HOST Ip', required=True)
+    cmdParser.add_argument('-i','--PORT',PORT='PORT', help='HOST Port', required=True)
+    args = cmdParser.parse_args();
+
+
+    ADDR = (args.IP, args.PORT)
     serversock = socket(AF_INET, SOCK_STREAM)
     serversock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serversock.bind(ADDR)
