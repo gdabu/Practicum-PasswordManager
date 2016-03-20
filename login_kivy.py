@@ -1,49 +1,12 @@
-import socket
 import json
 import ast
+import MySQLdb
 
-HOST = '192.168.0.146'
+from ClientConnection import ClientConnection
+
+HOST = '192.168.0.159'
 # HOST = '142.232.169.184'
 PORT = 8000
-        
-class ClientConnection():
-    connection = None
-    clientSocket = None
-    server_address = None
-
-    def connect_to_server(self, ip, port):
-        try:
-            self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server_address = (ip, port)
-            self.clientSocket.connect(self.server_address)
-            self.connection = True
-        except socket.error, e:
-            print "socket error: ", e
-            self.connection = None
-    
-    def print_message(self, message):
-        print message
-
-    def send_command(self, message):
-        if self.connection:
-            self.clientSocket.sendall(message)
-
-    def receive_response(self):
-        data = self.clientSocket.recv(4096)
-        if not data:
-            self.connection = False
-            self.clientSocket.close()
-            raise socket.error
-        else:
-            return json.loads(data.rstrip())
-
-    def send_receive(self, message):
-        self.send_command(message)
-        return self.receive_response()
-
-    def terminate_connection(self):
-        self.connection = None
-        self.clientSocket = None
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -52,7 +15,34 @@ from kivy.properties import StringProperty, ListProperty, ObjectProperty, Boolea
 from kivy.uix.button import Button
 
 class RegistrationScreen(Screen):
-    pass
+    def register(self, username, password):
+
+        if username == "" or password == "":
+            self.ids.registration_status.text = "Text Input Empty"
+            return
+
+        connectivity = self.parent.clientConnection.connect_to_server(HOST, PORT)
+
+        if connectivity == True:
+
+            commandData = json.dumps({"action" : "REGISTER", "username":username, "password":password})
+            recvJsonData = self.parent.clientConnection.send_receive(commandData)
+
+            if recvJsonData['status'] == 200:
+                self.parent.cursor.execute("insert into users (username, password) values ('" + recvJsonData['additional']['username'] + "', '" + recvJsonData['additional']['password'] + "')")
+                self.parent.db.commit()
+                self.parent.current = "login_screen"
+            else:
+                self.ids.registration_status.text = "Unable to register"
+        else:
+            self.ids.registration_status.text = "Unable to connect to server"
+
+        self.ids.new_user.text = ""
+        self.ids.new_password.text = ""
+    
+    def backToLogin(self):
+        self.parent.current = "login_screen"
+
 class TwoFactorLoginScreen(Screen):
 
     def enterKey(self, secret):
@@ -117,13 +107,16 @@ class LoginScreen(Screen):
             self.username = username
             self.parent.current = "main_screen_offline"
 
+    def goToRegistrationScreen(self):
+        self.parent.current = "registration_screen"
+
 class AddPasswordScreen(Screen):
 
     def addPassword(self, new_account, new_password):
         print new_account, new_password
 
         if new_account == "" or new_password == "":
-            self.ids.add_password_status.text = "Text Input empty"
+            self.ids.add_password_status.text = "Text Text Input Empty empty"
             return
 
         try:
@@ -142,6 +135,14 @@ class AddPasswordScreen(Screen):
         self.ids.add_password_status.text = ""
         self.parent.current = "main_screen_online"
 
+class PasswordButton(Button):
+    pw_username = None
+    pw_account = None
+    pw_password = None
+    pw_id = None
+
+    def __init__(self, **kwargs):
+        super(PasswordButton, self).__init__(**kwargs)
 
 class MainScreenOnline(Screen):
     loggedInUser = StringProperty('')
@@ -160,7 +161,7 @@ class MainScreenOnline(Screen):
         commandData = json.dumps({"action" : "2FA_ENABLE", "enabled" : active})
         recvJsonData = self.parent.clientConnection.send_receive(commandData)
 
-    def createPasswords(self):
+    def goToAddPasswordScreen(self):
         self.parent.current = "add_password_screen"
 
     def readPasswords(self):
@@ -173,7 +174,7 @@ class MainScreenOnline(Screen):
         
         for button in self.ids.password_list.children:
             button.background_color = (1,1,1,1)
-        instance.background_color = (0.2, 0.60, 0.86, 1)
+        instance.background_color = (0.8, 0.8, 0.8, 1)
 
         self.currentAccount_pw = str(instance.pw_account)
         self.currentId_pw = str(instance.pw_id)
@@ -198,12 +199,12 @@ class MainScreenOnline(Screen):
         self.ids.password_list.clear_widgets()
         for entry in self.passwordList:
 
-            passwordBtn = Button(text=entry['account'], background_color=(0.93,0.93,0.93,1))
+            passwordBtn = PasswordButton(text=entry['account'], background_color=(0.93,0.93,0.93,1))
 
-            passwordBtn.apply_property(pw_username=StringProperty(entry['username']))
-            passwordBtn.apply_property(pw_account=StringProperty(entry['account']))
-            passwordBtn.apply_property(pw_password=StringProperty(entry['password']))
-            passwordBtn.apply_property(pw_id=StringProperty(entry['id']))
+            passwordBtn.pw_username = entry['username']
+            passwordBtn.pw_account=entry['account']
+            passwordBtn.pw_password=entry['password']
+            passwordBtn.pw_id=entry['id']
 
             passwordBtn.bind(on_release=self.onPasswordButtonClick)
 
@@ -266,10 +267,19 @@ class MainScreenOffline(Screen):
 
 class ScreenManagement(ScreenManager):
     clientConnection = None
+    db = None
+    cursor = None
 
     def __init__(self, **kwargs):
         super(ScreenManager, self).__init__(**kwargs)
         self.clientConnection = ClientConnection()
+
+        self.db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
+        self.cursor = self.db.cursor()
+        
+
+        print self.db
+        print self.cursor
 
 
 presentation = Builder.load_file("main.kv")

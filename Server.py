@@ -11,12 +11,6 @@ import argparse
 
 from mail3 import send_email
 
-
-
-
-HOST = '192.168.0.133'
-PORT = 8000 # must be input parameter @TODO
-
 def initLogger():
 
     logger = logging.getLogger(__name__)
@@ -93,7 +87,7 @@ def handler(clientsock, addr, db, logger):
                         sendFormattedJsonMessage(clientsock, "REGISTER", 400, "Registration Unsuccessfull")
                         raise
                     else:
-                        sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Unsuccessfull")
+                        sendFormattedJsonMessage(clientsock, "REGISTER", 400, "Registration Unsuccessfull")
                         print "Username already taken"
                         db.rollback()
                 
@@ -401,7 +395,7 @@ if __name__=='__main__':
     logger = initLogger()
 
     while 1:
-        print '>> Server Listening on Port: ', PORT
+        print '>> Server Listening on Port: ', args.PORT
         clientsock, addr = serversock.accept()
         print '>> Connected to: ', addr
         thread.start_new_thread(handler, (clientsock, addr, db, logger))

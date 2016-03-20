@@ -12,6 +12,43 @@ ScreenManagement:
         twoFactor_status: login_screen.twoFactor_status
     AddPasswordScreen
     TwoFactorLoginScreen
+    RegistrationScreen
+
+<RegistrationScreen>:
+    name: "registration_screen"
+    FloatLayout:
+        
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            
+            GridLayout: 
+                cols: 1
+                orientation:'vertical'
+                row_force_default: True
+                row_default_height: '32dp'
+                size_hint_y: None
+                height: self.minimum_height
+
+                TextInput:
+                    id: new_user
+                    multiline: False
+                    hint_text: 'Enter Email'
+                TextInput:
+                    id: new_password
+                    multiline: False
+                    hint_text: 'Enter Password'
+                
+                Label: 
+                    id: registration_status
+
+                Button: 
+                    on_release: root.register(new_user.text, new_password.text)
+                    text: "Register"
+                Button:
+                    on_release: root.backToLogin()
+                    text: "< Back to Login Screen"
+
 
 <TwoFactorLoginScreen>:
     name: "login_2fa_screen"
@@ -20,7 +57,6 @@ ScreenManagement:
         AnchorLayout:
             anchor_x: 'center'
             anchor_y: 'center'
-            padding: [100,0,100,0]
             
             GridLayout: 
                 cols: 1
@@ -53,7 +89,6 @@ ScreenManagement:
         AnchorLayout:
             anchor_x: 'center'
             anchor_y: 'center'
-            padding: [100,0,100,0]
             
             GridLayout: 
                 cols: 1
@@ -117,7 +152,9 @@ ScreenManagement:
                 height: self.minimum_height
                 padding:[50,0,50,0]
         		        
-
+                Switch:
+                    id: connectivity
+                    active: True
                 TextInput:
         			id: login_user
                     multiline: False
@@ -137,20 +174,9 @@ ScreenManagement:
         		Button:	
         			on_release: root.login(login_user.text, login_password.text,  connectivity.active)
         			text: "LOGIN"
-                Button: 
-                    text: "REGISTER"
-
-                BoxLayout:
-                    cols: 2
-                    padding:[50,200,50,0]
-                    Label:
-                        text: "Remote Connection"
-                    Switch:
-                        id: connectivity
-                        active: True
-
-
-
+                Button:
+                    on_release: root.goToRegistrationScreen()
+                    text: "Register"
 
 <MainScreenOnline>:
 	name: "main_screen_online"
@@ -165,7 +191,6 @@ ScreenManagement:
                 ScrollView:
                     GridLayout:
                         id: password_list
-                        padding: [0,0,50,0]
                         cols: 1
                         orientation: 'vertical'
 
@@ -175,6 +200,9 @@ ScreenManagement:
                         row_force_default: True
                         row_default_height: 100
 
+                        row_force_default: True
+                        row_default_height: '60dp'
+        
             GridLayout:
                 cols: 1
                 orientation: 'vertical' 
@@ -229,7 +257,7 @@ ScreenManagement:
                     padding: [50,50,50,50]
                     cols: 1
                     Button: 
-                        on_release: root.createPasswords()
+                        on_release: root.goToAddPasswordScreen()
                         text: "Add Password"
                     Button:
                         on_release: app.root.current = "login_screen"
