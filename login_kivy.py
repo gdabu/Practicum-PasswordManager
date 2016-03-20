@@ -2,10 +2,10 @@ import socket
 import json
 import ast
 
-HOST = '192.168.0.133'
+HOST = '192.168.0.146'
 # HOST = '142.232.169.184'
 PORT = 8000
-
+        
 class ClientConnection():
     connection = None
     clientSocket = None

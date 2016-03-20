@@ -22,4 +22,4 @@ def send_email(user, pwd, recipient, subject, body):
     except:
         print "failed to send mail"
 
-send_email("devbcit@gmail.com","bastard11", "geoffdabu@gmail.com", "test", "hello")
+
