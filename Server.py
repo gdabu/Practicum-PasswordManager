@@ -384,7 +384,7 @@ if __name__=='__main__':
 
     cmdParser = argparse.ArgumentParser(description="8505A1-CovertChannel Client")
     cmdParser.add_argument('-i','--IP',dest='IP', help='HOST Ip', required=True)
-    cmdParser.add_argument('-i','--PORT',dest='PORT', help='HOST Port', required=True)
+    cmdParser.add_argument('-p','--PORT',dest='PORT', help='HOST Port', required=True)
     args = cmdParser.parse_args();
 
 
