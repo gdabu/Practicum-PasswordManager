@@ -1,4 +1,5 @@
 import socket
+import json
 
 class ClientConnection():
     connection = None

@@ -9,7 +9,7 @@ import ast
 import logging
 import argparse
 
-from mail3 import send_email
+from mail import send_email
 
 def initLogger():
 

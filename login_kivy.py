@@ -1,10 +1,13 @@
 import json
 import ast
 import MySQLdb
+import bcrypt
+import socket
 
 from ClientConnection import ClientConnection
+from PasswordCrud import *
 
-HOST = '192.168.0.159'
+HOST = '192.168.0.181'
 # HOST = '142.232.169.184'
 PORT = 8000
 
@@ -62,7 +65,6 @@ class TwoFactorLoginScreen(Screen):
     def backToLogin(self):
         self.parent.current = "login_screen"
 
-
 class LoginScreen(Screen):
     loggedInUser = StringProperty('')
     login_status = StringProperty('')
@@ -103,37 +105,73 @@ class LoginScreen(Screen):
                 # self.parent.print_message(self.data)
 
         elif connectivity == False:
+            self.parent.cursor.execute("select * from users where username = '" + username + "'")
+            user = self.parent.cursor.fetchall()
+            try:
+                if len(user) == 0:
+                    print "User not found"
+                else:
+                    for row in user:
+                        if row[1] == bcrypt.hashpw(password.encode('utf-8'), row[1]):
+                            self.loggedInUser = row[0]
+                            self.login_status = ""
+                            self.parent.current = "main_screen_offline"
+                            return
+                        break
+            except ValueError,e:
+                print e
+            
+            self.login_status = "Unsuccessful Login"
+            return
 
-            self.username = username
-            self.parent.current = "main_screen_offline"
 
     def goToRegistrationScreen(self):
         self.parent.current = "registration_screen"
 
 class AddPasswordScreen(Screen):
+    loggedInUser = StringProperty('')
 
     def addPassword(self, new_account, new_password):
         print new_account, new_password
 
         if new_account == "" or new_password == "":
-            self.ids.add_password_status.text = "Text Text Input Empty empty"
+            self.ids.add_password_status.text = "Text Input Empty"
             return
 
         try:
             commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE", "entry" : {"account" : new_account, "accountPassword" : new_password}})
             recvJsonData = self.parent.clientConnection.send_receive(commandData)
+            PasswordCreate(self.parent.db, self.loggedInUser, new_account, new_password)
             self.ids.add_password_status.text = "Password Added"
-            self.backToMainMenu()
+            self.screenRedirect("main_screen_online")
 
         except socket.error, e:
             self.parent.clientConnection.terminate_connection()
             self.parent.current = "login_screen"
 
-    def backToMainMenu(self):
+    def screenRedirect(self, screen):
         self.ids.new_account.text = ""
         self.ids.new_password.text = ""
         self.ids.add_password_status.text = ""
-        self.parent.current = "main_screen_online"
+        self.parent.current = screen
+
+class AddPasswordScreenLocal(Screen):
+    loggedInUser = StringProperty('')
+
+    def addPasswordLocal(self, new_account, new_password):
+        if new_account == "" or new_password == "":
+            self.ids.add_password_status.text = "Text Input Empty"
+            return
+
+        PasswordCreate(self.parent.db, self.loggedInUser, new_account, new_password)
+        self.ids.add_password_status.text = "Password Added"
+        self.screenRedirect("main_screen_offline")
+
+    def screenRedirect(self, screen):
+        self.ids.new_account.text = ""
+        self.ids.new_password.text = ""
+        self.ids.add_password_status.text = ""
+        self.parent.current = screen
 
 class PasswordButton(Button):
     pw_username = None
@@ -219,6 +257,8 @@ class MainScreenOnline(Screen):
         
         pass
 
+    # NOTE: Deleting passwords both remotely and locally will not work because the password ID numbers wont 
+    # always be matching. Need to delete by account name, which means the account field needs to become unique.
     def deletePasswords(self, instance):
         print "deleting"
         print self.currentAccount_pw
@@ -227,6 +267,7 @@ class MainScreenOnline(Screen):
         try:
             commandData = json.dumps({"action" : "CRUD", "subaction" : "DELETE", "entry" : {"id" : self.currentId_pw}})
             recvJsonData = self.parent.clientConnection.send_receive(commandData)
+            # PasswordDelete(self.parent.db, self.loggedInUser, self.currentId_pw)
             self.loadPasswordList_UI()
             self.ids.password_button_container.clear_widgets()
             self.ids.password_info.text = ""
@@ -245,22 +286,88 @@ class MainScreenOnline(Screen):
         self.parent.current = "login_screen"
         pass
 
-
+        
 
 class MainScreenOffline(Screen):
     loggedInUser = StringProperty('')
+    
     twoFactor_status = BooleanProperty('')
 
-    def createPasswords():
+    passwordList = ListProperty([])
+    currentAccount_pw = StringProperty('')
+    currentPassword_pw = StringProperty('')
+    currentId_pw = StringProperty('')
+    
+    def goToAddPasswordScreen(self):
+        self.parent.current = "add_password_screen_local"
+
+    def readPasswords(self):
+        passwordList = PasswordRead(self.parent.db, self.loggedInUser)
+        self.passwordList = ast.literal_eval(passwordList)
+
+    def onPasswordButtonClick(self, instance):
+        
+        for button in self.ids.password_list.children:
+            button.background_color = (1,1,1,1)
+        instance.background_color = (0.8, 0.8, 0.8, 1)
+
+        self.currentAccount_pw = str(instance.pw_account)
+        self.currentId_pw = str(instance.pw_id)
+        self.currentPassword_pw = str(instance.pw_password)
+        
+        self.ids.password_info.text = "Account: {0}\nPassword: {1}".format(self.currentAccount_pw, self.currentPassword_pw)
+        
+        # Create and Add the update and delete buttons for the password
+        self.ids.password_button_container.clear_widgets()
+
+        updateButton = Button(text="UPDATE", id="password_button_update")
+        deleteButton = Button(text="DELETE", id="password_button_delete")
+
+        updateButton.bind(on_release=self.updatePasswords)
+        deleteButton.bind(on_release=self.deletePasswords)
+
+        self.ids.password_button_container.add_widget(updateButton)
+        self.ids.password_button_container.add_widget(deleteButton)
+
+    def loadPasswordList_UI(self):
+        self.readPasswords()
+        self.ids.password_list.clear_widgets()
+        for entry in self.passwordList:
+
+            passwordBtn = PasswordButton(text=entry['account'], background_color=(0.93,0.93,0.93,1))
+
+            passwordBtn.pw_username = entry['username']
+            passwordBtn.pw_account=entry['account']
+            passwordBtn.pw_password=entry['password']
+            passwordBtn.pw_id=entry['id']
+
+            passwordBtn.bind(on_release=self.onPasswordButtonClick)
+
+            self.ids.password_list.add_widget(passwordBtn)
+        
+    def updatePasswords(self, instance):
+        print "updating"
+        print self.currentAccount_pw
+        print self.currentId_pw
+        print self.currentPassword_pw
+        
         pass
 
-    def readPasswords():
+    def deletePasswords(self, instance):
+        PasswordDelete(self.parent.db, self.loggedInUser, self.currentId_pw)
+        self.loadPasswordList_UI()
+        self.ids.password_button_container.clear_widgets()
+        self.ids.password_info.text = ""
+
+    def syncPasswords(self):
+        
+        # self.parent.clientConnection.send_command("sync")
         pass
 
-    def updatePasswords():
-        pass
-
-    def deletePasswords():
+    def logout(self):
+        self.loggedInUser = ""
+        self.parent.clientConnection.terminate_connection()
+        self.parent.current = "login_screen"
         pass
 
 
