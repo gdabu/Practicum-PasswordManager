@@ -9,7 +9,10 @@ import ast
 import logging
 import argparse
 
+from scan import *
+
 from mail import send_email
+from IpRules import *
 
 def initLogger():
 
@@ -44,6 +47,7 @@ def handler(clientsock, addr, db, logger):
     loggedInUser = ""
     # @param attemptedLogUser - the user who is attempting to log in, used for 2FA login
     attemptedLogUser = ""
+    failedLoginCount = 0
 
     
 
@@ -104,6 +108,7 @@ def handler(clientsock, addr, db, logger):
                 attemptedPassword = commandData['password'].encode('utf-8')
                 db.commit()
 
+                
                 if len(user) == 0:
                     print "User not found"
                     print "LOGGED SHIT"
@@ -111,6 +116,7 @@ def handler(clientsock, addr, db, logger):
                     logger.warn('Login attempt to user: %s from IP %s - Invalid Username', commandData['username'], clientsock.getsockname())
 
                     sendFormattedJsonMessage(clientsock, "LOGIN", 400, "LOGIN Unsuccessfull: USER NOT FOUND")
+                    failedLoginCount += 1
                 else:
                     print "user found"
                     print user
@@ -125,7 +131,8 @@ def handler(clientsock, addr, db, logger):
                                 print "LOGGED SHIT"
                                 logger.info('Login to user: %s from IP %s - Successfull Login', commandData['username'], clientsock.getsockname())
                                 sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':False})
-                                
+                                failedLoginCount = 0
+
                             else:
                                 # TODO : SEND EMAIL WITH KEY
                                 attemptedLogUser = row[0]
@@ -143,7 +150,14 @@ def handler(clientsock, addr, db, logger):
                             print "LOGGED SHIT"
                             logger.warn('Login attempt to user: %s from IP %s - Wrong Password', commandData['username'], clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "LOGIN", 402, "LOGIN Unsuccessfull: WRONG PASSWORD")
+                            failedLoginCount += 1
                         break
+
+                
+                # TODO : set failedLoginCount max in config file
+                # set block duration in config file
+                if failedLoginCount == 5:
+                    blockIp(addr[0], 5)
 
                 continue
 
@@ -171,6 +185,7 @@ def handler(clientsock, addr, db, logger):
                         else:
                             logger.warn('Login attempt to user: %s from IP %s - Wrong 2FA key', attemptedLogUser, clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "2FA_LOGIN", 404, "LOGIN Unsuccessfull: WRONG SECRET")
+                            failedLoginCount += 1
                             break
                 except ValueError, e:
                     sendFormattedJsonMessage(clientsock, "ERROR", 900, "LOGIN Unsuccessfull: NAN")
@@ -344,6 +359,12 @@ def handler(clientsock, addr, db, logger):
                 
                 continue
 
+            elif command == "SCAN" and loggedIn == True:
+                hosts = getHosts('142.232.169.0/24')
+                sendFormattedJsonMessage(clientsock, command, 200, "SUCCESSFUL NETWORK SCAN", {'hosts' : str(hosts)})
+                # sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})                
+
+
             # 
             # NOT LOGGED IN
             # 
@@ -351,6 +372,9 @@ def handler(clientsock, addr, db, logger):
                 print addr, "- Not Logged In"
                 sendFormattedJsonMessage(clientsock, command, 400, "COMMAND Unsuccessfull: You must be logged in")
                 continue
+
+            
+
 
             # 
             # Logout

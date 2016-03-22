@@ -7,7 +7,8 @@ import socket
 from ClientConnection import ClientConnection
 from PasswordCrud import *
 
-HOST = '192.168.0.197'
+# HOST = '192.168.0.197'
+HOST = '142.232.169.214'
 # HOST = '142.232.169.184'
 PORT = 8000
 
@@ -16,6 +17,37 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 from kivy.uix.button import Button, Label
+
+class NetworkScreen(Screen):
+    hostList = ListProperty([])
+    loggedInUser = StringProperty('')
+
+    def getHosts(self):
+        commandData = json.dumps({"action" : "SCAN"})
+        recvJsonData = self.parent.clientConnection.send_receive(commandData)
+        self.hostList = ast.literal_eval(recvJsonData['additional']['hosts'])
+
+
+    def loadHostList_UI(self):
+        
+        self.ids.host_list.clear_widgets()
+        self.getHosts()
+        
+        for entry in self.hostList:
+            print entry
+            hostBtn = Button(text=entry['host'], background_color=(0.93,0.93,0.93,1))
+
+            # passwordBtn = PasswordButton(text=entry['account'], background_color=(0.93,0.93,0.93,1))
+
+            # passwordBtn.pw_username = entry['username']
+            # passwordBtn.pw_account=entry['account']
+            # passwordBtn.pw_password=entry['password']
+            # passwordBtn.pw_id=entry['id']
+
+            # passwordBtn.bind(on_release=self.onPasswordButtonClick)
+
+            self.ids.host_list.add_widget(hostBtn)
+
 
 class SyncScreen(Screen):
     loggedInUser = StringProperty('')
@@ -113,9 +145,9 @@ class RegistrationScreen(Screen):
             self.ids.registration_status.text = "Text Input Empty"
             return
 
-        connectivity = self.parent.clientConnection.connect_to_server(HOST, PORT)
+        # connectivity = self.parent.clientConnection.connect_to_server(HOST, PORT)
 
-        if connectivity == True:
+        if self.parent.clientConnection.connection != None:
 
             commandData = json.dumps({"action" : "REGISTER", "username":username, "password":password})
             recvJsonData = self.parent.clientConnection.send_receive(commandData)
@@ -164,7 +196,6 @@ class LoginScreen(Screen):
 
         # Connect to server if connectivity switch is True
         if connectivity == True:    
-            self.parent.clientConnection.connect_to_server(HOST, PORT)
             
             # If a server connection exists
             if self.parent.clientConnection.connection != None:
@@ -215,7 +246,10 @@ class LoginScreen(Screen):
 
 
     def goToRegistrationScreen(self):
-        self.parent.current = "registration_screen"
+        if self.parent.clientConnection.connection != None:
+            self.parent.current = "registration_screen"
+        else:
+            self.login_status = "Unable to Connect" 
 
 class AddPasswordScreen(Screen):
     loggedInUser = StringProperty('')
@@ -459,13 +493,14 @@ class MainScreenOffline(Screen):
 
 class ScreenManagement(ScreenManager):
     clientConnection = None
+    connected = None
     db = None
     cursor = None
 
     def __init__(self, **kwargs):
         super(ScreenManager, self).__init__(**kwargs)
         self.clientConnection = ClientConnection()
-
+        self.connected = self.clientConnection.connect_to_server(HOST, PORT)
         self.db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
         self.cursor = self.db.cursor()
         
