@@ -9,6 +9,7 @@ class ClientConnection():
     def connect_to_server(self, ip, port):
         try:
             self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.clientSocket.settimeout(5)
             self.server_address = (ip, port)
             self.clientSocket.connect(self.server_address)
             self.connection = True
