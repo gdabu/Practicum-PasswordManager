@@ -191,6 +191,9 @@ class LoginScreen(Screen):
     login_status = StringProperty('')
     twoFactor_status = BooleanProperty('')
 
+    def connect():
+        self.parent.clientConnection.connect_to_server(HOST, PORT)
+
     def login(self, username, password, connectivity):
         recvJsonData = None
 
@@ -500,7 +503,7 @@ class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManager, self).__init__(**kwargs)
         self.clientConnection = ClientConnection()
-        self.connected = self.clientConnection.connect_to_server(HOST, PORT)
+        # self.connected = self.clientConnection.connect_to_server(HOST, PORT)
         self.db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
         self.cursor = self.db.cursor()
         
