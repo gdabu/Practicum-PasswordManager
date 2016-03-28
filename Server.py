@@ -12,7 +12,7 @@ import argparse
 from scan import *
 
 from mail import send_email
-from IpRules import *
+from ipRules import *
 
 def initLogger():
 
