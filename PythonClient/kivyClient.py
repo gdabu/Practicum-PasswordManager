@@ -7,7 +7,7 @@ import socket
 from ClientConnection import ClientConnection
 from PasswordCrud import *
 
-HOST = '192.168.0.57'
+HOST = '192.168.0.8'
 # HOST = '142.232.169.214'
 # HOST = '142.232.169.184'
 PORT = 8000
@@ -23,9 +23,17 @@ class NetworkScreen(Screen):
     loggedInUser = StringProperty('')
 
     def getHosts(self):
-        commandData = json.dumps({"action" : "SCAN"})
-        recvJsonData = self.parent.clientConnection.send_receive(commandData)
-        self.hostList = ast.literal_eval(recvJsonData['additional']['hosts'])
+        try:
+            commandData = json.dumps({"action" : "SCAN"})
+            recvJsonData = self.parent.clientConnection.send_receive(commandData)
+            self.hostList = ast.literal_eval(recvJsonData['additional']['hosts'])
+        except Exception, e:
+            raise
+        else:
+            pass
+        finally:
+            pass
+
 
 
     def loadHostList_UI(self):
@@ -191,7 +199,7 @@ class LoginScreen(Screen):
     login_status = StringProperty('')
     twoFactor_status = BooleanProperty('')
 
-    def connect():
+    def connect(self):
         self.parent.clientConnection.connect_to_server(HOST, PORT)
 
     def login(self, username, password, connectivity):

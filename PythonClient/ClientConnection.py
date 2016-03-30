@@ -9,7 +9,7 @@ class ClientConnection():
     def connect_to_server(self, ip, port):
         try:
             self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.clientSocket.settimeout(5)
+            # self.clientSocket.settimeout(5)
             self.server_address = (ip, port)
             self.clientSocket.connect(self.server_address)
             self.connection = True
@@ -32,7 +32,7 @@ class ClientConnection():
             self.clientSocket.close()
             raise socket.error
         else:
-            return json.loads(data.rstrip())
+            return json.loads(data.rstrip('\n'))
 
     def send_receive(self, message):
         self.send_command(message)
