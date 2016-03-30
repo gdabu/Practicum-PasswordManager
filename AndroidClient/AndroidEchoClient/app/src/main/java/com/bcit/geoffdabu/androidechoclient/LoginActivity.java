@@ -3,14 +3,17 @@ package com.bcit.geoffdabu.androidechoclient;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -38,8 +41,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.InetAddress;
-import java.net.Socket;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,9 +65,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "test@test.com:test", "bar@example.com:world"
-    };
+//    private static final String[] DUMMY_CREDENTIALS = new String[]{
+//            "test@test.com:test", "bar@example.com:world"
+//    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -150,12 +152,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         doBindService();
 
 
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         doUnbindService();
+
     }
 
     private void populateAutoComplete() {
@@ -378,13 +382,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 login.put("action", "LOGIN");
                 login.put("username", mEmail);
                 login.put("password", mPassword);
-            }catch(JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             if (mBoundService != null) {
-                mBoundService.sendMessage(login.toString());
+                System.out.println("fuckeragua: " + mBoundService.sendMessage(login.toString()));
             }
+
+
+
+
+
 
 
 //            for (String credential : DUMMY_CREDENTIALS) {

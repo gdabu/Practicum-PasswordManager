@@ -12,11 +12,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+
 import android.util.Log;
 import android.widget.Toast;
 
 public class SocketService extends Service {
-    public static final String SERVERIP = "10.227.221.125"; //your computer IP address should be written here
+    public static final String SERVERIP = "192.168.0.8"; //your computer IP address should be written here
     public static final int SERVERPORT = 8000;
     PrintWriter out;
     BufferedReader in;
@@ -49,8 +50,8 @@ public class SocketService extends Service {
         Toast.makeText(this, "I bind like butter", Toast.LENGTH_LONG).show();
     }
 
-    public void sendMessage(String message) {
-        String response;
+    public String sendMessage(String message) {
+        String response = "";
 
         try {
             if (out != null && !out.checkError()) {
@@ -60,12 +61,12 @@ public class SocketService extends Service {
                 out.flush();
 
                 response = in.readLine();
-                System.out.println("fuckeroni: " + response);
-
             }
         } catch (Exception e) {
             System.out.println("disconnected");
         }
+
+        return response;
 
     }
 
