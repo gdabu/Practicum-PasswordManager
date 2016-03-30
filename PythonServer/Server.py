@@ -14,6 +14,8 @@ from scan import *
 from mail import send_email
 from ipRules import *
 
+from sys import platform as _platform
+
 def initLogger():
 
     logger = logging.getLogger(__name__)
@@ -109,6 +111,8 @@ def handler(clientsock, addr, db, logger):
                 db.commit()
 
                 
+
+                
                 if len(user) == 0:
                     print "User not found"
                     print "LOGGED SHIT"
@@ -121,8 +125,9 @@ def handler(clientsock, addr, db, logger):
                     print "user found"
                     print user
                     for row in user:
-                        print row[1]
-                        print len(row[1])
+                        # print row[1]
+                        # print len(row[1])
+                        
                         if row[1] == bcrypt.hashpw(attemptedPassword, row[1]):
                             
                             # CHECK FOR 2FA REQUIREMENT
@@ -417,7 +422,13 @@ if __name__=='__main__':
     serversock.bind(ADDR)
     serversock.listen(5)
 
-    db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
+    if _platform == "darwin":
+        dbpassword = ""
+    else:
+        dbpassword = "bastard11"
+
+
+    db = MySQLdb.connect(host="localhost", user="root", passwd=dbpassword, db="pwd_manager")
     logger = initLogger()
 
     while 1:

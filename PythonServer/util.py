@@ -16,5 +16,5 @@ def sendFormattedJsonMessage(clientsock, action, status, message, additional = {
     json.dumps(additional)
 
     sendMessage = json.dumps({"action" : action, "status" : status, "message" : message, "additional" :  additional})
-    clientsock.sendall(sendMessage)
+    clientsock.sendall(sendMessage + "\n")
 
