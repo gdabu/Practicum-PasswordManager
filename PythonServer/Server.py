@@ -55,7 +55,7 @@ def handler(clientsock, addr, db, logger):
         while 1:
             
             data = clientsock.recv(4096)
-            
+            print data
             # if client disconnects
             if not data:
                 print addr, "- Connection Closed"
