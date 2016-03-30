@@ -121,6 +121,8 @@ def handler(clientsock, addr, db, logger):
                     print "user found"
                     print user
                     for row in user:
+                        print row[1]
+                        print len(row[1])
                         if row[1] == bcrypt.hashpw(attemptedPassword, row[1]):
                             
                             # CHECK FOR 2FA REQUIREMENT
@@ -415,7 +417,7 @@ if __name__=='__main__':
     serversock.bind(ADDR)
     serversock.listen(5)
 
-    db = MySQLdb.connect(host="localhost", user="root", passwd="", db="pwd_manager")
+    db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
     logger = initLogger()
 
     while 1:

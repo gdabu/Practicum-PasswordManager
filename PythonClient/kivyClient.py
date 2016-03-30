@@ -7,8 +7,8 @@ import socket
 from ClientConnection import ClientConnection
 from PasswordCrud import *
 
-# HOST = '192.168.0.197'
-HOST = '142.232.169.214'
+HOST = '192.168.0.57'
+# HOST = '142.232.169.214'
 # HOST = '142.232.169.184'
 PORT = 8000
 
@@ -503,7 +503,7 @@ class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManager, self).__init__(**kwargs)
         self.clientConnection = ClientConnection()
-        # self.connected = self.clientConnection.connect_to_server(HOST, PORT)
+        self.connected = self.clientConnection.connect_to_server(HOST, PORT)
         self.db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
         self.cursor = self.db.cursor()
         

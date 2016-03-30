@@ -35,6 +35,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -83,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         public void onServiceConnected(ComponentName name, IBinder service) {
             // TODO Auto-generated method stub
             System.out.println("connected");
-            mBoundService = ((SocketService.LocalBinder)service).getService();
+            mBoundService = ((SocketService.LocalBinder) service).getService();
         }
 
         @Override
@@ -98,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         bindService(new Intent(LoginActivity.this, SocketService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
 
-        if(mBoundService!=null){
+        if (mBoundService != null) {
             mBoundService.IsBoundable();
         }
     }
@@ -367,30 +370,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            if(mBoundService!=null)
-            {
-                System.out.println("fuck you in the nigger");
-                mBoundService.sendMessage("hjgjkhg");
-                mBoundService.sendMessage("hjgjkhg");
-                mBoundService.sendMessage("hjgjkhg");
-            }
+
+            JSONObject login = new JSONObject();
+
+
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-
-            } catch (InterruptedException e) {
-                return false;
+                login.put("action", "LOGIN");
+                login.put("username", mEmail);
+                login.put("password", mPassword);
+            }catch(JSONException e){
+                e.printStackTrace();
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-
-                    return pieces[1].equals(mPassword);
-                }
+            if (mBoundService != null) {
+                mBoundService.sendMessage(login.toString());
             }
+
+
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mEmail)) {
+//                    // Account exists, return true if the password matches.
+//
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }
 
             // TODO: register the new account here.
             return true;
