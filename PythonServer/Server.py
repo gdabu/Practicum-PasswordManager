@@ -260,7 +260,7 @@ def handler(clientsock, addr, db, logger):
                     print passwordList
                     db.commit()
 
-                    sendFormattedJsonMessage(clientsock, command, 200, "PULL EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : str(passwordList)})
+                    sendFormattedJsonMessage(clientsock, command, 200, "PULL EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : passwordList})
                 
                 elif commandData['subaction'] == "DIFF":
 
@@ -280,7 +280,7 @@ def handler(clientsock, addr, db, logger):
                     print passwordList
                     db.commit()
 
-                    sendFormattedJsonMessage(clientsock, command, 200, "DIFF EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : str(passwordList)})
+                    sendFormattedJsonMessage(clientsock, command, 200, "DIFF EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : passwordList})
                 else:
                     print "Not a Valid SYNC Command"
                     sendFormattedJsonMessage(clientsock, command, 400, "COMMAND EXECUTED - INVALID", {'subaction' : commandData['subaction']})
@@ -318,7 +318,7 @@ def handler(clientsock, addr, db, logger):
                     print passwordList
                     db.commit()
 
-                    sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : str(passwordList)})
+                    sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : passwordList})
                     continue
 
                 elif commandData['subaction'] == "UPDATE":
@@ -368,7 +368,7 @@ def handler(clientsock, addr, db, logger):
 
             elif command == "SCAN" and loggedIn == True:
                 hosts = getHosts('192.168.0.0/24')
-                sendFormattedJsonMessage(clientsock, command, 200, "SUCCESSFUL NETWORK SCAN", {'hosts' : str(hosts)})
+                sendFormattedJsonMessage(clientsock, command, 200, "SUCCESSFUL NETWORK SCAN", {'hosts' : hosts})
                 # sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})                
 
 
