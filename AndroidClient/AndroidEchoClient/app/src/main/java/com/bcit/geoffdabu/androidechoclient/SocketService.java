@@ -17,12 +17,20 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class SocketService extends Service {
-    public static final String SERVERIP = "192.168.0.8"; //your computer IP address should be written here
+    public static final String SERVERIP = "192.168.0.26"; //your computer IP address should be written here
     public static final int SERVERPORT = 8000;
-    PrintWriter out;
-    BufferedReader in;
-    Socket socket;
-    InetAddress serverAddr;
+
+    private PrintWriter out;
+    private BufferedReader in;
+    private Socket socket = null;
+    private InetAddress serverAddr;
+
+    public boolean isConnected(){
+        if(socket == null){
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -110,11 +118,13 @@ public class SocketService extends Service {
                 } catch (Exception e) {
 
                     Log.e("TCP", "S: Error", e);
+                    socket = null;
 
                 }
             } catch (Exception e) {
 
                 Log.e("TCP", "C: Error", e);
+                socket = null;
 
             }
 

@@ -37,6 +37,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -150,7 +151,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         startService(new Intent(this, SocketService.class));
         doBindService();
-
 
 
     }
@@ -376,37 +376,47 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
 
             JSONObject login = new JSONObject();
-
+            JSONObject recvJsonData = new JSONObject();
 
             try {
+
                 login.put("action", "LOGIN");
                 login.put("username", mEmail);
                 login.put("password", mPassword);
+
+
+
+                if (mBoundService.isConnected()) {
+
+                    if (mBoundService != null) {
+                        recvJsonData = new JSONObject(mBoundService.sendMessage(login.toString()));
+                    }
+
+                    if (recvJsonData.getString("action").equals("LOGIN") && recvJsonData.getInt("status") == 200) {
+
+                        Log.e("TCP Client", "Successful User Login");
+
+                        // TODO: Check for 2FA
+
+                        return true;
+
+                    } else {
+                        Log.e("TCP Client", "Unsuccessful User Login");
+                    }
+
+                } else {
+                    System.out.println("Unable to Connect");
+                    return false;
+                }
+
             } catch (JSONException e) {
+
+                System.out.print("Login Error: ");
                 e.printStackTrace();
+
             }
 
-            if (mBoundService != null) {
-                System.out.println("fuckeragua: " + mBoundService.sendMessage(login.toString()));
-            }
-
-
-
-
-
-
-
-//            for (String credential : DUMMY_CREDENTIALS) {
-//                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(mEmail)) {
-//                    // Account exists, return true if the password matches.
-//
-//                    return pieces[1].equals(mPassword);
-//                }
-//            }
-
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
@@ -414,12 +424,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
+
+
             if (success) {
                 // Switching to Register screen
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
+//                Intent i = new Intent(getApplicationContext(), MainOnlineActivity.class);
+//                startActivity(i);
                 finish();
             } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT);
+                toast.show();
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }

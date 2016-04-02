@@ -23,16 +23,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <!--<service-->
-            <!--android:name=".SocketService"-->
-            <!--android:label="My Service" >-->
-        <!--</service>-->
-        <service android:enabled="true" android:name="com.bcit.geoffdabu.androidechoclient.SocketService" />
+        <!-- <service -->
+        <!-- android:name=".SocketService" -->
+        <!-- android:label="My Service" > -->
+        <!-- </service> -->
+        <service
+            android:name=".SocketService"
+            android:enabled="true" />
+
     </application>
 
 </manifest>

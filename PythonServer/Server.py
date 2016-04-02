@@ -110,7 +110,7 @@ def handler(clientsock, addr, db, logger):
                 attemptedPassword = commandData['password'].encode('utf-8')
                 db.commit()
 
-                
+
 
                 
                 if len(user) == 0:
@@ -367,7 +367,7 @@ def handler(clientsock, addr, db, logger):
                 continue
 
             elif command == "SCAN" and loggedIn == True:
-                hosts = getHosts('142.232.169.0/24')
+                hosts = getHosts('192.168.0.0/24')
                 sendFormattedJsonMessage(clientsock, command, 200, "SUCCESSFUL NETWORK SCAN", {'hosts' : str(hosts)})
                 # sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})                
 
@@ -428,7 +428,7 @@ if __name__=='__main__':
         dbpassword = "bastard11"
 
 
-    db = MySQLdb.connect(host="localhost", user="root", passwd=dbpassword, db="pwd_manager")
+    db = MySQLdb.connect(host="localhost", user="root", passwd="", db="pwd_manager")
     logger = initLogger()
 
     while 1:
