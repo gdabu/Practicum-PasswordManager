@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -11,7 +12,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -21,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class OnlineMainActivity extends AppCompatActivity {
     private static SocketService mBoundService;
@@ -28,14 +32,18 @@ public class OnlineMainActivity extends AppCompatActivity {
 
     private NetworkTask mNetworkTask = null;
     private ListView mainListView;
-    private ArrayAdapter<String> listAdapter;
+    private ArrayAdapter<Password> listAdapter;
+//    private PasswordAdapter passwordAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Password List");
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -191,21 +199,79 @@ public class OnlineMainActivity extends AppCompatActivity {
             try {
 
                 if (recvJsonObject.getString("action").equals("CRUD")) {
-                    JSONArray passwordList = recvJsonObject.getJSONObject("additional").getJSONArray("passwords");
-                    ArrayList<String> planetList = new ArrayList<String>();
+                    final JSONArray passwordList = recvJsonObject.getJSONObject("additional").getJSONArray("passwords");
+
 
                     // Find the ListView resource.
                     mainListView = (ListView) findViewById(R.id.mainListView);
-
-                    // Create ArrayAdapter using the planet list.
-                    listAdapter = new ArrayAdapter<String>(OnlineMainActivity.this, R.layout.listitem, planetList);
-
+                    final Password[] passwords = new Password[passwordList.length()];
 
                     for (int i = 0; i < passwordList.length(); i++) {
-
-                        listAdapter.add(passwordList.getJSONObject(i).getString("account"));
-
+                        passwords[i] = new Password(passwordList.getJSONObject(i).getString("account"), passwordList.getJSONObject(i).getString("password"));
                     }
+
+                    // Create ArrayAdapter using the planet list.
+                    listAdapter = new ArrayAdapter<Password>(OnlineMainActivity.this, R.layout.listitem, passwords);
+
+
+
+                    mainListView.setOnItemClickListener((new AdapterView.OnItemClickListener() {
+
+                        public void onItemClick(AdapterView<?> arg0, View view,
+                                                       int index, long arg3) {
+                            final Snackbar snackBar = Snackbar.make(view, "Password: " +  passwords[index].getPassword(), Snackbar.LENGTH_INDEFINITE);
+
+
+                            snackBar.setAction("Hide", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    return;
+                                }
+                            });
+                            snackBar.show();
+                            return;
+                        }
+                    }));
+
+                    mainListView.setOnItemLongClickListener((new AdapterView.OnItemLongClickListener() {
+
+                        public boolean onItemLongClick(AdapterView<?> arg0, View view,
+                                                       int index, long arg3) {
+                            final Snackbar snackBar = Snackbar.make(view, "Would you like to delete this entry?", Snackbar.LENGTH_LONG);
+
+
+                            snackBar.setAction("Confirm", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    JSONObject commandData = new JSONObject();
+
+                                    // TODO: SEND DELETE COMMAND TO SERVER
+//                                    try {
+//                                        commandData.put("action", "CRUD");
+//                                        commandData.put("subaction", "READ");
+//
+//                                        mNetworkTask = new NetworkTask(commandData);
+//                                        mNetworkTask.execute((Void) null);
+//
+//
+//                                    } catch (JSONException e) {
+//
+//                                        e.printStackTrace();
+//
+//                                    }
+
+                                    return;
+                                }
+                            });
+                            snackBar.show();
+                            return true;
+                        }
+                    }));
+
+
+
+
 
                     // Set the ArrayAdapter as the ListView's adapter.
                     mainListView.setAdapter(listAdapter);
