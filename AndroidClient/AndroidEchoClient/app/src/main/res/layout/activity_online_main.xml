@@ -8,23 +8,24 @@
     tools:context="com.bcit.geoffdabu.androidechoclient.OnlineMainActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:layout_height="192dp"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="192dp">
+
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
-                app:layout_collapseMode="pin"/>
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_online_main" />
-
 
 
     <android.support.design.widget.FloatingActionButton
@@ -37,4 +38,4 @@
 
 </android.support.design.widget.CoordinatorLayout>
 
-<!--delete-->
+    <!--delete-->

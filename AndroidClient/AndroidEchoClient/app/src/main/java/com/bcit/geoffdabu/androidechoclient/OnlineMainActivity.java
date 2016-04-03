@@ -1,10 +1,13 @@
 package com.bcit.geoffdabu.androidechoclient;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -12,19 +15,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class OnlineMainActivity extends AppCompatActivity {
     private static SocketService mBoundService;
@@ -33,7 +36,6 @@ public class OnlineMainActivity extends AppCompatActivity {
     private NetworkTask mNetworkTask = null;
     private ListView mainListView;
     private ArrayAdapter<Password> listAdapter;
-//    private PasswordAdapter passwordAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,22 +54,57 @@ public class OnlineMainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                JSONObject commandData = new JSONObject();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(OnlineMainActivity.this);
+                builder.setTitle("Add New Password");
 
 
-                try {
-                    commandData.put("action", "CRUD");
-                    commandData.put("subaction", "READ");
+                // Set up the input
+                final EditText input = new EditText(OnlineMainActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setHint("Account");
 
-                    mNetworkTask = new NetworkTask(commandData);
-                    mNetworkTask.execute((Void) null);
+                final EditText input2 = new EditText(OnlineMainActivity.this);
+                input2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                input2.setHint("Password");
+
+                LinearLayout ll=new LinearLayout(OnlineMainActivity.this);
+                ll.setOrientation(LinearLayout.VERTICAL);
+                ll.addView(input);
+                ll.addView(input2);
+                ll.setPadding(60,20,60,0);
+                builder.setView(ll);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String account = input.getText().toString();
+                        String password = input2.getText().toString();
+                        JSONObject commandData = new JSONObject();
+                        try {
+                            commandData.put("action", "CRUD");
+                            commandData.put("subaction", "CREATE");
+                            commandData.put("entry", new JSONObject().put("account", account).put("accountPassword", password));
+
+                            mNetworkTask = new NetworkTask(commandData);
+                            mNetworkTask.execute((Void) null);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
 
 
-                } catch (JSONException e) {
-
-                    e.printStackTrace();
-
-                }
             }
         });
 
@@ -96,6 +133,8 @@ public class OnlineMainActivity extends AppCompatActivity {
         super.onDestroy();
         doUnbindService();
     }
+
+
 
 
     /*
@@ -192,6 +231,81 @@ public class OnlineMainActivity extends AppCompatActivity {
             return true;
         }
 
+        private void crudReadResponseHandler() throws JSONException {
+            final JSONArray passwordList = recvJsonObject.getJSONObject("additional").getJSONArray("passwords");
+
+            // Find the ListView resource.
+            mainListView = (ListView) findViewById(R.id.mainListView);
+            final Password[] passwords = new Password[passwordList.length()];
+
+            for (int i = 0; i < passwordList.length(); i++) {
+                passwords[i] = new Password(passwordList.getJSONObject(i).getString("account"), passwordList.getJSONObject(i).getString("password"), passwordList.getJSONObject(i).getInt("id"));
+            }
+
+            // Create ArrayAdapter using the planet list.
+            listAdapter = new ArrayAdapter<Password>(OnlineMainActivity.this, R.layout.listitem, passwords);
+
+
+            mainListView.setOnItemClickListener((new AdapterView.OnItemClickListener() {
+
+                public void onItemClick(AdapterView<?> arg0, View view,
+                                        int index, long arg3) {
+                    final Snackbar snackBar = Snackbar.make(view, "Password: " + passwords[index].getPassword(), Snackbar.LENGTH_INDEFINITE);
+
+
+                    snackBar.setAction("Hide", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            return;
+                        }
+                    });
+                    snackBar.show();
+                    return;
+                }
+            }));
+
+            mainListView.setOnItemLongClickListener((new AdapterView.OnItemLongClickListener() {
+
+                public boolean onItemLongClick(AdapterView<?> arg0, View view,
+                                               final int index, long arg3) {
+                    new AlertDialog.Builder(OnlineMainActivity.this)
+                            .setTitle("Delete Password")
+                            .setMessage("Are you sure you want to delete this password?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // continue with delete
+                                    JSONObject commandData = new JSONObject();
+                                    try {
+                                        commandData.put("action", "CRUD");
+                                        commandData.put("subaction", "DELETE");
+                                        commandData.put("entry", new JSONObject().put("id", passwords[index].getId()));
+
+                                        mNetworkTask = new NetworkTask(commandData);
+                                        mNetworkTask.execute((Void) null);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_delete)
+                            .show();
+                    return true;
+                }
+            }));
+
+
+            // Set the ArrayAdapter as the ListView's adapter.
+            mainListView.setAdapter(listAdapter);
+
+            return;
+        }
+
         @Override
         protected void onPostExecute(final Boolean success) {
 
@@ -199,87 +313,26 @@ public class OnlineMainActivity extends AppCompatActivity {
             try {
 
                 if (recvJsonObject.getString("action").equals("CRUD")) {
-                    final JSONArray passwordList = recvJsonObject.getJSONObject("additional").getJSONArray("passwords");
 
+                    if (recvJsonObject.getJSONObject("additional").getString("subaction").equals("READ")) {
+                        crudReadResponseHandler();
+                    } else {
+                        JSONObject commandData = new JSONObject();
+                        try {
+                            commandData.put("action", "CRUD");
+                            commandData.put("subaction", "READ");
 
-                    // Find the ListView resource.
-                    mainListView = (ListView) findViewById(R.id.mainListView);
-                    final Password[] passwords = new Password[passwordList.length()];
+                            mNetworkTask = new NetworkTask(commandData);
+                            mNetworkTask.execute((Void) null);
+                        } catch (JSONException e) {
 
-                    for (int i = 0; i < passwordList.length(); i++) {
-                        passwords[i] = new Password(passwordList.getJSONObject(i).getString("account"), passwordList.getJSONObject(i).getString("password"));
+                            e.printStackTrace();
+
+                        }
                     }
 
-                    // Create ArrayAdapter using the planet list.
-                    listAdapter = new ArrayAdapter<Password>(OnlineMainActivity.this, R.layout.listitem, passwords);
-
-
-
-                    mainListView.setOnItemClickListener((new AdapterView.OnItemClickListener() {
-
-                        public void onItemClick(AdapterView<?> arg0, View view,
-                                                       int index, long arg3) {
-                            final Snackbar snackBar = Snackbar.make(view, "Password: " +  passwords[index].getPassword(), Snackbar.LENGTH_INDEFINITE);
-
-
-                            snackBar.setAction("Hide", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    return;
-                                }
-                            });
-                            snackBar.show();
-                            return;
-                        }
-                    }));
-
-                    mainListView.setOnItemLongClickListener((new AdapterView.OnItemLongClickListener() {
-
-                        public boolean onItemLongClick(AdapterView<?> arg0, View view,
-                                                       int index, long arg3) {
-                            final Snackbar snackBar = Snackbar.make(view, "Would you like to delete this entry?", Snackbar.LENGTH_LONG);
-
-
-                            snackBar.setAction("Confirm", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    JSONObject commandData = new JSONObject();
-
-                                    // TODO: SEND DELETE COMMAND TO SERVER
-//                                    try {
-//                                        commandData.put("action", "CRUD");
-//                                        commandData.put("subaction", "READ");
-//
-//                                        mNetworkTask = new NetworkTask(commandData);
-//                                        mNetworkTask.execute((Void) null);
-//
-//
-//                                    } catch (JSONException e) {
-//
-//                                        e.printStackTrace();
-//
-//                                    }
-
-                                    return;
-                                }
-                            });
-                            snackBar.show();
-                            return true;
-                        }
-                    }));
-
-
-
-
-
-                    // Set the ArrayAdapter as the ListView's adapter.
-                    mainListView.setAdapter(listAdapter);
-
                 }
-
-
-            } catch (Exception e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 

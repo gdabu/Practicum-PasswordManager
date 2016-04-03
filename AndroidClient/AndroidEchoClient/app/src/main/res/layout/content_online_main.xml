@@ -12,9 +12,13 @@
     tools:context="com.bcit.geoffdabu.androidechoclient.OnlineMainActivity"
     tools:showIn="@layout/activity_online_main">
 
-    <ListView android:layout_width="fill_parent"
+    <ListView
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/mainListView">
-    </ListView>
+        android:id="@+id/mainListView"
+        android:scrollbars="vertical"/>
+
+
+
 
 </RelativeLayout>

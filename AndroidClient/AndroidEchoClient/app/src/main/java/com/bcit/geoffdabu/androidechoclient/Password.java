@@ -9,22 +9,28 @@ import android.widget.ArrayAdapter;
  */
 public class Password {
 
-    public String password;
-    public String account;
+    private String password;
+    private String account;
+    private int id;
     
     public Password(){
         super();
     }
 
-    public Password(String password, String account) {
+    public Password(String password, String account, int id) {
         super();
         this.password = password;
         this.account = account;
+        this.id = id;
     }
 
     public String getPassword(){
         return password;
     }
+    public int getId(){
+        return id;
+    }
+
 
     public String getAccount(){
         return account;
