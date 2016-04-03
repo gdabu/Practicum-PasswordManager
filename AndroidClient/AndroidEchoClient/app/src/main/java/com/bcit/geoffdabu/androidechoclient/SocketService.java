@@ -16,8 +16,10 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 public class SocketService extends Service {
-    public static final String SERVERIP = "192.168.0.26"; //your computer IP address should be written here
+    public static final String SERVERIP = "192.168.0.8"; //your computer IP address should be written here
     public static final int SERVERPORT = 8000;
 
     private PrintWriter out;
@@ -58,8 +60,8 @@ public class SocketService extends Service {
         Toast.makeText(this, "I bind like butter", Toast.LENGTH_LONG).show();
     }
 
-    public String sendMessage(String message) {
-        String response = "";
+    public JSONObject sendMessage(String message) {
+        JSONObject response = null;
 
         try {
             if (out != null && !out.checkError()) {
@@ -68,7 +70,7 @@ public class SocketService extends Service {
                 out.println(message);
                 out.flush();
 
-                response = in.readLine();
+                response = new JSONObject(in.readLine());
             }
         } catch (Exception e) {
             System.out.println("disconnected");

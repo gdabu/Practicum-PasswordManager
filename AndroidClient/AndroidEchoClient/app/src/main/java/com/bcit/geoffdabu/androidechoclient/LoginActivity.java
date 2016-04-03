@@ -389,7 +389,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (mBoundService.isConnected()) {
 
                     if (mBoundService != null) {
-                        recvJsonData = new JSONObject(mBoundService.sendMessage(login.toString()));
+                        recvJsonData = mBoundService.sendMessage(login.toString());
                     }
 
                     if (recvJsonData.getString("action").equals("LOGIN") && recvJsonData.getInt("status") == 200) {
@@ -428,8 +428,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
                 // Switching to Register screen
-//                Intent i = new Intent(getApplicationContext(), MainOnlineActivity.class);
-//                startActivity(i);
+                Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
+                startActivity(i);
                 finish();
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT);
