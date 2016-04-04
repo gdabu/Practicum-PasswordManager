@@ -18,7 +18,7 @@ def PasswordRead(db, username):
     
     db.commit()
 
-    return json.dumps(passwordList)
+    return passwordList
 
 def PasswordDelete(db, username, passwordId):
     cursor = db.cursor()

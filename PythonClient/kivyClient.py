@@ -7,7 +7,7 @@ import socket
 from ClientConnection import ClientConnection
 from PasswordCrud import *
 
-HOST = '192.168.0.26'
+HOST = '192.168.0.8'
 # HOST = '142.232.169.214'
 # HOST = '142.232.169.184'
 PORT = 8000
@@ -26,7 +26,7 @@ class NetworkScreen(Screen):
         try:
             commandData = json.dumps({"action" : "SCAN"})
             recvJsonData = self.parent.clientConnection.send_receive(commandData)
-            self.hostList = ast.literal_eval(recvJsonData['additional']['hosts'])
+            self.hostList = recvJsonData['additional']['hosts']
         except Exception, e:
             raise
         else:
@@ -68,7 +68,7 @@ class SyncScreen(Screen):
         recvJsonData = self.parent.clientConnection.send_receive(commandData)
 
         self.parent.cursor.execute("delete from passwords where username='" + self.loggedInUser + "'" )
-        pushPasswordData = ast.literal_eval(recvJsonData['additional']['passwords'])
+        pushPasswordData = recvJsonData['additional']['passwords']
 
         for password in pushPasswordData:
             self.parent.cursor.execute("insert into passwords (username, account, password) values ('" + self.loggedInUser + "', '" + password['account'] + "', '" + password['password'] + "')" )
@@ -103,10 +103,10 @@ class SyncScreen(Screen):
     def readPasswords(self):
         commandData = json.dumps({"action" : "CRUD", "subaction" : "READ"})
         recvJsonData = self.parent.clientConnection.send_receive(commandData)
-        self.remotePasswordList = ast.literal_eval(recvJsonData['additional']['passwords'])
+        self.remotePasswordList = recvJsonData['additional']['passwords']
 
         passwordList = PasswordRead(self.parent.db, self.loggedInUser)
-        self.localPasswordList = ast.literal_eval(passwordList)
+        self.localPasswordList = passwordList
     
     def loadPasswordList_UI(self):
         self.readPasswords()
@@ -340,7 +340,7 @@ class MainScreenOnline(Screen):
 
         commandData = json.dumps({"action" : "CRUD", "subaction" : "READ"})
         recvJsonData = self.parent.clientConnection.send_receive(commandData)
-        self.passwordList = ast.literal_eval(recvJsonData['additional']['passwords'])
+        self.passwordList = recvJsonData['additional']['passwords']
 
     def onPasswordButtonClick(self, instance):
         
@@ -435,7 +435,7 @@ class MainScreenOffline(Screen):
 
     def readPasswords(self):
         passwordList = PasswordRead(self.parent.db, self.loggedInUser)
-        self.passwordList = ast.literal_eval(passwordList)
+        self.passwordList = passwordList
 
     def onPasswordButtonClick(self, instance):
         
