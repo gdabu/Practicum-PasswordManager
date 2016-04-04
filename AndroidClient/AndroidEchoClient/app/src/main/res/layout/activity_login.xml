@@ -28,7 +28,18 @@
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/ImageView02"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo"
+                android:paddingBottom="50px"
+                android:paddingTop="50px"
+                android:tint="#FF303F9F" />
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

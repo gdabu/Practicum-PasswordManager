@@ -293,7 +293,7 @@ public class OnlineMainActivity extends AppCompatActivity {
                                     // do nothing
                                 }
                             })
-                            .setIcon(android.R.drawable.ic_delete)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
                     return true;
                 }

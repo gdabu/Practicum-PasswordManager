@@ -158,6 +158,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(this, SocketService.class));
         doUnbindService();
 
     }
@@ -424,13 +425,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-
-
             if (success) {
                 // Switching to Register screen
                 Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
                 startActivity(i);
-                finish();
+//                finish();
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT);
                 toast.show();
@@ -444,6 +443,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+
     }
 
 

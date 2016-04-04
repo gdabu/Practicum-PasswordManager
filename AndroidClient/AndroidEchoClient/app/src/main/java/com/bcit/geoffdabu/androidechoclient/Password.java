@@ -17,7 +17,7 @@ public class Password {
         super();
     }
 
-    public Password(String password, String account, int id) {
+    public Password(String account, String password,  int id) {
         super();
         this.password = password;
         this.account = account;
@@ -25,15 +25,16 @@ public class Password {
     }
 
     public String getPassword(){
-        return password;
+        return this.password;
     }
     public int getId(){
         return id;
     }
 
 
+
     public String getAccount(){
-        return account;
+        return this.account;
     }
 
     @Override
