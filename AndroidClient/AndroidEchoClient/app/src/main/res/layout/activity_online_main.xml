@@ -7,25 +7,31 @@
     android:fitsSystemWindows="true"
     tools:context="com.bcit.geoffdabu.androidechoclient.OnlineMainActivity">
 
-    <android.support.design.widget.AppBarLayout
+
+
+    <android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="192dp">
+        android:layout_height="match_parent">
+        <include layout="@layout/content_online_main" />
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:layout_width="match_parent"
+        <!-- The navigation drawer -->
+        <ListView android:id="@+id/left_drawer"
+            android:layout_width="240dp"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            android:layout_gravity="start"
+            android:choiceMode="singleChoice"
+            android:divider="#666"
+            android:background="#333"
+            android:paddingTop="20sp"
+            android:paddingLeft="5sp"
+            android:paddingRight="5sp">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" />
 
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
+        </ListView>
 
-    <include layout="@layout/content_online_main" />
+    </android.support.v4.widget.DrawerLayout>
 
 
     <android.support.design.widget.FloatingActionButton
