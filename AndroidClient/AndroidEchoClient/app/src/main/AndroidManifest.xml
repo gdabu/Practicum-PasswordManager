@@ -14,7 +14,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
@@ -24,17 +23,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+
         <service
             android:name=".SocketService"
             android:enabled="true" />
 
         <activity
             android:name=".OnlineMainActivity"
-            android:label="Password List">
-        </activity>
-
+            android:label="Password List" />
+        <activity
+            android:name=".NetworkToolsActivity"
+            android:label="@string/title_activity_network_tools"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

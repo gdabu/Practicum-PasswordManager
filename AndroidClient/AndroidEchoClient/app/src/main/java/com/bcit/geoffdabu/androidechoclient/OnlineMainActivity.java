@@ -46,14 +46,25 @@ public class OnlineMainActivity extends AppCompatActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
+            System.out.println(parent);
             selectItem(position);
+
         }
     }
 
     /** Swaps fragments in the main content view */
     private void selectItem(int position) {
         // Create a new fragment and specify the planet to show based on position
-        System.out.println(position);
+        if(position == 0){
+
+        }else if(position == 1){
+
+        }else if(position == 2){
+
+        }else if(position == 3){
+            Intent i = new Intent(getApplicationContext(), NetworkToolsActivity.class);
+            startActivity(i);
+        }
     }
 
     @Override
