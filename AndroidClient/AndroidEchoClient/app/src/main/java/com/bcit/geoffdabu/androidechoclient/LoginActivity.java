@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.ServiceConnection;
@@ -26,19 +28,24 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,6 +89,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private SocketService mBoundService;
     boolean mIsBound = false;
+
+    NetworkTask mNetworkTask = null;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         //EDITED PART
@@ -149,7 +158,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
 
 
         startService(new Intent(this, SocketService.class));
@@ -362,6 +370,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -370,6 +379,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+
+        private String loginStatus;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -396,25 +407,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                     if (recvJsonData.getString("action").equals("LOGIN") && recvJsonData.getInt("status") == 200) {
 
-                        Log.e("TCP Client", "Successful User Login");
 
-                        
-                        if (recvJsonData.getJSONObject("additional").getBoolean("tfa_enabled") == false){
+
+
+                        if (recvJsonData.getJSONObject("additional").getBoolean("tfa_enabled") == false) {
+                            Log.e("TCP Client", "Successful User Login");
+
+                            loginStatus = "success";
                             return true;
-                        }else{
+                        } else {
 //                          // TODO: PROMPT WITH 2FA KEY MENU
+                            loginStatus = "fail_need2fa";
                             return false;
                         }
 
 
-
-
                     } else {
                         Log.e("TCP Client", "Unsuccessful User Login");
+                        loginStatus = "fail_wrongPassword";
+                        return false;
                     }
 
                 } else {
                     System.out.println("Unable to Connect");
+                    loginStatus = "fail_noConnection";
                     return false;
                 }
 
@@ -428,6 +444,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return false;
         }
 
+
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
@@ -438,11 +455,68 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
                 startActivity(i);
 //                finish();
+
             } else {
-                Toast toast = Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT);
-                toast.show();
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+
+                if (loginStatus.equals("fail_need2fa")) {
+
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                    builder.setTitle("Enter 2FA Key");
+                    builder.setMessage("A secret key was sent to your email");
+                    // Set up the input
+                    final EditText input = new EditText(LoginActivity.this);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    input.setHint("Enter Secret Key: ");
+
+
+                    LinearLayout ll = new LinearLayout(LoginActivity.this);
+                    ll.setOrientation(LinearLayout.VERTICAL);
+                    ll.addView(input);
+                    ll.setPadding(60, 20, 60, 0);
+                    builder.setView(ll);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String secret = input.getText().toString();
+                            JSONObject commandData = new JSONObject();
+                            try {
+                                commandData.put("action", "2FA_LOGIN");
+                                commandData.put("secret", secret);
+
+                                mNetworkTask = new NetworkTask(commandData);
+                                mNetworkTask.execute((Void) null);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+
+                } else if (loginStatus.equals("fail_wrongPassword")) {
+
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+
+                } else if ((loginStatus.equals("fail_noConnection"))) {
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT);
+                    toast.show();
+
+                } else {
+
+                }
             }
         }
 
@@ -452,6 +526,60 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
 
+    }
+
+    public class NetworkTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final JSONObject sendJsonObject;
+        private JSONObject recvJsonObject;
+
+
+        NetworkTask(JSONObject message) {
+            this.sendJsonObject = message;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            if (mBoundService != null) {
+                recvJsonObject = mBoundService.sendMessage(sendJsonObject.toString());
+            } else {
+                System.out.println("not connected");
+            }
+
+            if (recvJsonObject == null) {
+                return false;
+            }
+
+
+            System.out.println(recvJsonObject);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            System.out.println("IN POST EXECUTE");
+            try {
+
+                if (recvJsonObject.getString("action").equals("2FA_LOGIN")) {
+                    if(recvJsonObject.getInt("status") == 200){
+                        Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
+                        startActivity(i);
+                    }
+                }
+                Toast toast = Toast.makeText(LoginActivity.this, "Incorrect Secret Key", Toast.LENGTH_SHORT);
+                toast.show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+
+        @Override
+        protected void onCancelled() {
+            mNetworkTask = null;
+        }
     }
 
 
