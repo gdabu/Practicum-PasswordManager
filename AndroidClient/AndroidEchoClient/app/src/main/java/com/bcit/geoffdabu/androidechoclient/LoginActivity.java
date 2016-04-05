@@ -12,6 +12,7 @@ import android.content.Intent;
 
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,7 +30,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -158,6 +164,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        SpannableString ss = new SpannableString("Create one.");
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+            }
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(clickableSpan, 0, ss.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        TextView textView = (TextView) findViewById(R.id.registerLink);
+        textView.append(ss);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setHighlightColor(Color.TRANSPARENT);
+
 
 
         startService(new Intent(this, SocketService.class));
@@ -565,6 +591,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if(recvJsonObject.getInt("status") == 200){
                         Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
                         startActivity(i);
+                        return;
                     }
                 }
                 Toast toast = Toast.makeText(LoginActivity.this, "Incorrect Secret Key", Toast.LENGTH_SHORT);
