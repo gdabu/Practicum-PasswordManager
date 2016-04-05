@@ -19,7 +19,7 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 public class SocketService extends Service {
-    public static final String SERVERIP = "192.168.0.8"; //your computer IP address should be written here
+    public static final String SERVERIP = "142.232.169.219"; //your computer IP address should be written here
     public static final int SERVERPORT = 8000;
 
     private PrintWriter out;
@@ -57,7 +57,7 @@ public class SocketService extends Service {
     }
 
     public void IsBoundable() {
-        Toast.makeText(this, "I bind like butter", Toast.LENGTH_LONG).show();
+
     }
 
     public JSONObject sendMessage(String message) {

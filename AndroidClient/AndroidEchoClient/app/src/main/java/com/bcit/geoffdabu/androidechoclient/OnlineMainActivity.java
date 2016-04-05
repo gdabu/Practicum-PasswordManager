@@ -14,17 +14,23 @@ import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +48,9 @@ public class OnlineMainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+
+
+    private ProgressBar bar;
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -67,12 +76,32 @@ public class OnlineMainActivity extends AppCompatActivity {
         }
     }
 
+    private ActionBarDrawerToggle mDrawerToggle;
+
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        // If the nav drawer is open, hide action items related to the content view
+//        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+//        menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+//        return super.onPrepareOptionsMenu(menu);
+//    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_main);
 
-        String[] mPlanetTitles = { "Password List", "Local Password List", "Sync", "Network Tools"};
+        String[] mPlanetTitles = { "Password List", "Local Password List", "Sync", "Network Scan"};
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -84,12 +113,43 @@ public class OnlineMainActivity extends AppCompatActivity {
 
 
 
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0){
+
+            @Override
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                syncState();
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                syncState();
+            }
+
+
+
+        };
+
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
+        mDrawerToggle.syncState();
+
+
+        bar = (ProgressBar) this.findViewById(R.id.progressBar);
+
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(OnlineMainActivity.this);
@@ -105,11 +165,11 @@ public class OnlineMainActivity extends AppCompatActivity {
                 input2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 input2.setHint("Password");
 
-                LinearLayout ll=new LinearLayout(OnlineMainActivity.this);
+                LinearLayout ll = new LinearLayout(OnlineMainActivity.this);
                 ll.setOrientation(LinearLayout.VERTICAL);
                 ll.addView(input);
                 ll.addView(input2);
-                ll.setPadding(60,20,60,0);
+                ll.setPadding(60, 20, 60, 0);
                 builder.setView(ll);
 
                 // Set up the buttons
@@ -146,6 +206,10 @@ public class OnlineMainActivity extends AppCompatActivity {
         });
 
         doBindService();
+
+
+
+
     }
 
     private void doBindService() {
@@ -251,6 +315,9 @@ public class OnlineMainActivity extends AppCompatActivity {
             this.sendJsonObject = message;
         }
 
+        protected void onPreExecute(){
+            bar.setVisibility(View.VISIBLE);
+        }
         @Override
         protected Boolean doInBackground(Void... params) {
             if (mBoundService != null) {
@@ -330,7 +397,7 @@ public class OnlineMainActivity extends AppCompatActivity {
                                     // do nothing
                                 }
                             })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setIcon(R.drawable.ic_warning_black_48dp)
                             .show();
                     return true;
                 }
@@ -340,12 +407,14 @@ public class OnlineMainActivity extends AppCompatActivity {
             // Set the ArrayAdapter as the ListView's adapter.
             mainListView.setAdapter(listAdapter);
 
+
+
             return;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
-
+            bar.setVisibility(View.GONE);
             System.out.println("IN POST EXECUTE");
             try {
 
@@ -354,6 +423,7 @@ public class OnlineMainActivity extends AppCompatActivity {
                     if (recvJsonObject.getJSONObject("additional").getString("subaction").equals("READ")) {
                         crudReadResponseHandler();
                     } else {
+
                         JSONObject commandData = new JSONObject();
                         try {
                             commandData.put("action", "CRUD");
@@ -365,6 +435,11 @@ public class OnlineMainActivity extends AppCompatActivity {
 
                             e.printStackTrace();
 
+                        }
+                        if(recvJsonObject.getJSONObject("additional").getString("subaction").equals("CREATE")) {
+                            Toast.makeText(getApplicationContext(), "Password Added!", Toast.LENGTH_SHORT).show();
+                        }else if(recvJsonObject.getJSONObject("additional").getString("subaction").equals("DELETE")){
+                            Toast.makeText(getApplicationContext(), "Password Deleted!", Toast.LENGTH_SHORT).show();
                         }
                     }
 

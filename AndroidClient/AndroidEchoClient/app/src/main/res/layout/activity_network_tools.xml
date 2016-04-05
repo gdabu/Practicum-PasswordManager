@@ -7,21 +7,51 @@
     android:fitsSystemWindows="true"
     tools:context="com.bcit.geoffdabu.androidechoclient.NetworkToolsActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
+        android:id="@+id/linlaHeaderProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"></ProgressBar>
+    </LinearLayout>
+
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <include layout="@layout/content_network_tools" />
 
-    </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_network_tools" />
+
+        <!-- The navigation drawer -->
+        <ListView
+            android:id="@+id/left_drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#333"
+            android:choiceMode="singleChoice"
+            android:divider="#666"
+            android:paddingLeft="5sp"
+            android:paddingRight="5sp"
+            android:paddingTop="20sp">
+
+
+        </ListView>
+
+
+    </android.support.v4.widget.DrawerLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -29,6 +59,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        android:src="@drawable/ic_router_white_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>

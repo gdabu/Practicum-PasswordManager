@@ -388,8 +388,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 login.put("username", mEmail);
                 login.put("password", mPassword);
 
-
-
                 if (mBoundService.isConnected()) {
 
                     if (mBoundService != null) {
@@ -400,9 +398,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                         Log.e("TCP Client", "Successful User Login");
 
-                        // TODO: Check for 2FA
+                        
+                        if (recvJsonData.getJSONObject("additional").getBoolean("tfa_enabled") == false){
+                            return true;
+                        }else{
+//                          // TODO: PROMPT WITH 2FA KEY MENU
+                            return false;
+                        }
 
-                        return true;
+
+
 
                     } else {
                         Log.e("TCP Client", "Unsuccessful User Login");

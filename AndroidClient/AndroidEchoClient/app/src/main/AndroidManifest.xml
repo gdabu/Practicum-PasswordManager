@@ -34,8 +34,9 @@
             android:label="Password List" />
         <activity
             android:name=".NetworkToolsActivity"
-            android:label="@string/title_activity_network_tools"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/title_activity_network_tools">
+
+        </activity>
     </application>
 
 </manifest>
