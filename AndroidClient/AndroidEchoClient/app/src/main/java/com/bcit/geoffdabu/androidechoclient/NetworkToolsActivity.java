@@ -65,6 +65,10 @@ public class NetworkToolsActivity extends AppCompatActivity {
 
         }else if(position == 3){
 
+        }else if (position == 4){
+            finish();
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i);
         }
     }
 
@@ -89,7 +93,7 @@ public class NetworkToolsActivity extends AppCompatActivity {
 
 
 
-        String[] mPlanetTitles = { "Password List", "Local Password List", "Sync", "Network Scan"};
+        String[] mPlanetTitles = { "Password List", "Local Password List", "Sync", "Network Scan", "Logout"};
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 

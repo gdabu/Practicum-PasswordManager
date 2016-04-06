@@ -169,8 +169,91 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+//                startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                if (mBoundService.isConnected()) {
+
+//                builder.setMessage("A secret key was sent to your email");
+                    // Set up the input
+                    final EditText input = new EditText(LoginActivity.this);
+                    final EditText input2 = new EditText(LoginActivity.this);
+                    final EditText input3 = new EditText(LoginActivity.this);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    input.setHint("User Name");
+                    input2.setInputType(InputType.TYPE_CLASS_TEXT |
+                            InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    input2.setHint("Password");
+                    input3.setInputType(InputType.TYPE_CLASS_TEXT |
+                            InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    input3.setHint("Confirm Password");
+
+
+                    LinearLayout ll = new LinearLayout(LoginActivity.this);
+                    ll.setOrientation(LinearLayout.VERTICAL);
+                    ll.addView(input);
+                    ll.addView(input2);
+                    ll.addView(input3);
+                    ll.setPadding(60, 20, 60, 0);
+
+                    final AlertDialog d = new AlertDialog.Builder(LoginActivity.this)
+                            .setTitle("Sign Up")
+                            .setView(ll)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .create();
+
+                    d.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                        @Override
+                        public void onShow(DialogInterface dialog) {
+
+                            Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+                            b.setOnClickListener(new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View view) {
+                                    // TODO Do something
+
+                                    //Dismiss once everything is OK.
+                                    String username = input.getText().toString();
+                                    String password = input2.getText().toString();
+                                    String confirmpassword = input3.getText().toString();
+
+
+                                    if (!password.equals(confirmpassword)) {
+                                        Toast toast = Toast.makeText(getApplicationContext(), "Password does not match", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                        return;
+                                    }
+
+                                    JSONObject commandData = new JSONObject();
+                                    try {
+
+                                        commandData.put("action", "REGISTER");
+                                        commandData.put("username", username);
+                                        commandData.put("password", password);
+
+                                        mNetworkTask = new NetworkTask(commandData);
+                                        mNetworkTask.execute((Void) null);
+                                        d.dismiss();
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            });
+                        }
+                    });
+
+                    d.show();
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT);
+                    toast.show();
+
+                }
+
             }
+
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);
@@ -183,7 +266,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         textView.append(ss);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setHighlightColor(Color.TRANSPARENT);
-
 
 
         startService(new Intent(this, SocketService.class));
@@ -434,8 +516,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (recvJsonData.getString("action").equals("LOGIN") && recvJsonData.getInt("status") == 200) {
 
 
-
-
                         if (recvJsonData.getJSONObject("additional").getBoolean("tfa_enabled") == false) {
                             Log.e("TCP Client", "Successful User Login");
 
@@ -485,7 +565,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } else {
 
                 if (loginStatus.equals("fail_need2fa")) {
-
 
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
@@ -587,15 +666,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             System.out.println("IN POST EXECUTE");
             try {
 
+
                 if (recvJsonObject.getString("action").equals("2FA_LOGIN")) {
-                    if(recvJsonObject.getInt("status") == 200){
+                    if (recvJsonObject.getInt("status") == 200) {
                         Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
                         startActivity(i);
-                        return;
+
+                    } else {
+
+                        Toast toast = Toast.makeText(LoginActivity.this, "Incorrect Secret Key", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                } else if (recvJsonObject.getString("action").equals("REGISTER")) {
+                    if (recvJsonObject.getInt("status") == 200) {
+                        Toast toast = Toast.makeText(LoginActivity.this, "Registration Successful", Toast.LENGTH_SHORT);
+                        toast.show();
+                    } if(recvJsonObject.getInt("status") == 401) {
+                        Toast toast = Toast.makeText(LoginActivity.this, "Username Taken", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }else {
+                        Toast toast = Toast.makeText(LoginActivity.this, "Registration Unsuccessful", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 }
-                Toast toast = Toast.makeText(LoginActivity.this, "Incorrect Secret Key", Toast.LENGTH_SHORT);
-                toast.show();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

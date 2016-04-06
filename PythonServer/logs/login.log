@@ -128,3 +128,19 @@
 2016-04-01 20:28:48,930 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
 2016-04-01 20:33:45,450 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
 2016-04-01 20:34:06,989 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
+2016-04-05 14:44:08,497 - __main__ - WARNING - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull 2FA Login
+2016-04-05 14:45:02,190 - __main__ - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.26', 8000) - Wrong 2FA key
+2016-04-05 14:45:42,468 - __main__ - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.26', 8000) - Wrong 2FA key
+2016-04-05 14:45:59,039 - __main__ - WARNING - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull 2FA Login
+2016-04-05 14:59:04,339 - __main__ - WARNING - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull 2FA Login
+2016-04-05 15:05:23,142 - __main__ - WARNING - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull 2FA Login
+2016-04-05 15:20:20,678 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
+2016-04-05 15:21:07,480 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
+2016-04-05 15:21:20,181 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
+2016-04-05 15:22:12,205 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
+2016-04-05 15:23:46,306 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
+2016-04-05 15:30:08,266 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull Login
+2016-04-05 15:49:16,550 - __main__ - WARNING - Login to user: test@test.com from IP ('192.168.0.26', 8000) - Successfull 2FA Login
+2016-04-05 17:51:25,576 - __main__ - INFO - Login to user: test3@test.com from IP ('142.232.169.144', 8000) - Successfull Login
+2016-04-05 18:35:51,085 - __main__ - INFO - Login to user: test@test.com from IP ('142.232.169.144', 8000) - Successfull Login
+2016-04-05 18:36:23,918 - __main__ - INFO - Login to user: test4@test.com from IP ('142.232.169.144', 8000) - Successfull Login

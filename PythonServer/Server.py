@@ -93,7 +93,7 @@ def handler(clientsock, addr, db, logger):
                         sendFormattedJsonMessage(clientsock, "REGISTER", 400, "Registration Unsuccessfull")
                         raise
                     else:
-                        sendFormattedJsonMessage(clientsock, "REGISTER", 400, "Registration Unsuccessfull")
+                        sendFormattedJsonMessage(clientsock, "REGISTER", 401, "Registration Unsuccessfull")
                         print "Username already taken"
                         db.rollback()
                 

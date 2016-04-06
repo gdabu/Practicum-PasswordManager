@@ -73,6 +73,10 @@ public class OnlineMainActivity extends AppCompatActivity {
         }else if(position == 3){
             Intent i = new Intent(getApplicationContext(), NetworkToolsActivity.class);
             startActivity(i);
+        }else if (position == 4){
+            finish();
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i);
         }
     }
 
@@ -101,7 +105,7 @@ public class OnlineMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_main);
 
-        String[] mPlanetTitles = { "Password List", "Local Password List", "Sync", "Network Scan"};
+        String[] mPlanetTitles = { "Password List", "Local Password List", "Sync", "Network Scan" , "Logout"};
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
