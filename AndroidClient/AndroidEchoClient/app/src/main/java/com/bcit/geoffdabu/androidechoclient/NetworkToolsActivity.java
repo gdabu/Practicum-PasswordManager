@@ -57,15 +57,10 @@ public class NetworkToolsActivity extends AppCompatActivity {
     private void selectItem(int position) {
         // Create a new fragment and specify the planet to show based on position
         if(position == 0){
+            finish();
             Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
             startActivity(i);
-        }else if(position == 1){
-
-        }else if(position == 2){
-
-        }else if(position == 3){
-
-        }else if (position == 4){
+        }else if (position == 2){
             finish();
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
@@ -93,7 +88,7 @@ public class NetworkToolsActivity extends AppCompatActivity {
 
 
 
-        String[] mPlanetTitles = { "Password List", "Local Password List", "Sync", "Network Scan", "Logout"};
+        String[] mPlanetTitles = { "Password List", "Network Scan", "Logout"};
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 

@@ -16,6 +16,8 @@ from ipRules import *
 
 from sys import platform as _platform
 
+netscan = '142.232.169.0/24'
+
 def initLogger():
 
     logger = logging.getLogger(__name__)
@@ -367,7 +369,7 @@ def handler(clientsock, addr, db, logger):
                 continue
 
             elif command == "SCAN" and loggedIn == True:
-                hosts = getHosts('192.168.0.0/24')
+                hosts = getHosts(netscan)
                 sendFormattedJsonMessage(clientsock, command, 200, "SUCCESSFUL NETWORK SCAN", {'hosts' : hosts})
                 # sendFormattedJsonMessage(clientsock, command, 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})                
 
