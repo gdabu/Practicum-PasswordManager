@@ -6,8 +6,10 @@ import socket
 
 from ClientConnection import ClientConnection
 from PasswordCrud import *
+from AesEncryption import *
+from AESCipher import *
 
-HOST = '192.168.0.8'
+HOST = '192.168.0.226'
 # HOST = '142.232.169.214'
 # HOST = '142.232.169.184'
 PORT = 8000
@@ -122,7 +124,12 @@ class SyncScreen(Screen):
 
             passwordBtn.pw_username = entry['username']
             passwordBtn.pw_account=entry['account']
-            passwordBtn.pw_password=entry['password']
+            try:
+                passwordBtn.pw_password=cipher.decrypt(entry['password'])
+            except Exception, e:
+                print e
+                passwordBtn.pw_password="Unable to Decrypt"
+            passwordBtn.pw_id=entry['id']
             passwordBtn.pw_id=entry['id']
 
             passwordBtn.pw_location = "Local"
@@ -137,7 +144,12 @@ class SyncScreen(Screen):
 
             passwordBtn.pw_username = entry['username']
             passwordBtn.pw_account=entry['account']
-            passwordBtn.pw_password=entry['password']
+            try:
+                passwordBtn.pw_password=cipher.decrypt(entry['password'])
+            except Exception, e:
+                print e
+                passwordBtn.pw_password="Unable to Decrypt"
+            passwordBtn.pw_id=entry['id']
             passwordBtn.pw_id=entry['id']
 
             passwordBtn.pw_location = "Remote"
@@ -273,9 +285,18 @@ class AddPasswordScreen(Screen):
             return
 
         try:
-            commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE", "entry" : {"account" : new_account, "accountPassword" : new_password}})
+            cipher = AESCipher("nv93h50sk1zh508v");
+
+            # encrypted = cipher.encrypt("HELLO IM A FUCKING CUNT NUGGET WHORE BITCH. IM HERE TO STEAL YOUR WIFE. HELLO NIGGER");
+            try:
+                encrypted_password = cipher.encrypt(new_password)
+            except Exception, e:
+                self.ids.add_password_status.text = "Unable To Encrypt Password"
+                return
+            
+            commandData = json.dumps({"action" : "CRUD", "subaction" : "CREATE", "entry" : {"account" : new_account, "accountPassword" : encrypted_password}})
             recvJsonData = self.parent.clientConnection.send_receive(commandData)
-            PasswordCreate(self.parent.db, self.loggedInUser, new_account, new_password)
+            PasswordCreate(self.parent.db, self.loggedInUser, new_account, encrypted_password)
             self.ids.add_password_status.text = "Password Added"
             self.screenRedirect("main_screen_online")
 
@@ -369,13 +390,19 @@ class MainScreenOnline(Screen):
     def loadPasswordList_UI(self):
         self.readPasswords()
         self.ids.password_list.clear_widgets()
+        cipher = AESCipher("nv93h50sk1zh508v");
         for entry in self.passwordList:
 
             passwordBtn = PasswordButton(text=entry['account'], background_color=(0.93,0.93,0.93,1))
 
             passwordBtn.pw_username = entry['username']
             passwordBtn.pw_account=entry['account']
-            passwordBtn.pw_password=entry['password']
+            try:
+                passwordBtn.pw_password=cipher.decrypt(entry['password'])
+            except Exception, e:
+                print e
+                passwordBtn.pw_password="Unable to Decrypt"
+            passwordBtn.pw_id=entry['id']
             passwordBtn.pw_id=entry['id']
 
             passwordBtn.bind(on_release=self.onPasswordButtonClick)
@@ -464,13 +491,18 @@ class MainScreenOffline(Screen):
     def loadPasswordList_UI(self):
         self.readPasswords()
         self.ids.password_list.clear_widgets()
+        cipher = AESCipher("nv93h50sk1zh508v");
         for entry in self.passwordList:
 
             passwordBtn = PasswordButton(text=entry['account'], background_color=(0.93,0.93,0.93,1))
 
             passwordBtn.pw_username = entry['username']
             passwordBtn.pw_account=entry['account']
-            passwordBtn.pw_password=entry['password']
+            try:
+                passwordBtn.pw_password=cipher.decrypt(entry['password'])
+            except Exception, e:
+                print e
+                passwordBtn.pw_password="Unable to Decrypt"
             passwordBtn.pw_id=entry['id']
 
             passwordBtn.bind(on_release=self.onPasswordButtonClick)

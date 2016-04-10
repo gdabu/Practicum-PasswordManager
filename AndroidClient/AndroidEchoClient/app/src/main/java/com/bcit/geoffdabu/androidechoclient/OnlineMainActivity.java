@@ -52,6 +52,9 @@ public class OnlineMainActivity extends AppCompatActivity {
 
     private ProgressBar bar;
 
+
+    Crypt aesCrypt = new Crypt();
+
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -183,10 +186,14 @@ public class OnlineMainActivity extends AppCompatActivity {
                         try {
                             commandData.put("action", "CRUD");
                             commandData.put("subaction", "CREATE");
-                            commandData.put("entry", new JSONObject().put("account", account).put("accountPassword", password));
+                            try {
+                                commandData.put("entry", new JSONObject().put("account", account).put("accountPassword", aesCrypt.encrypt_string(password)));
+                                mNetworkTask = new NetworkTask(commandData);
+                                mNetworkTask.execute((Void) null);
+                            }catch (Exception e){
+                                System.out.println("Unable to encrypt password");
+                            }
 
-                            mNetworkTask = new NetworkTask(commandData);
-                            mNetworkTask.execute((Void) null);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -338,13 +345,18 @@ public class OnlineMainActivity extends AppCompatActivity {
 
         private void crudReadResponseHandler() throws JSONException {
             final JSONArray passwordList = recvJsonObject.getJSONObject("additional").getJSONArray("passwords");
-
+            String decrypted_password = "";
             // Find the ListView resource.
             mainListView = (ListView) findViewById(R.id.mainListView);
             final Password[] passwords = new Password[passwordList.length()];
 
             for (int i = 0; i < passwordList.length(); i++) {
-                passwords[i] = new Password(passwordList.getJSONObject(i).getString("account"), passwordList.getJSONObject(i).getString("password"), passwordList.getJSONObject(i).getInt("id"));
+                try {
+                    decrypted_password = aesCrypt.decrypt_string(passwordList.getJSONObject(i).getString("password"));
+                    passwords[i] = new Password(passwordList.getJSONObject(i).getString("account"), decrypted_password, passwordList.getJSONObject(i).getInt("id"));
+                }catch (Exception e){
+                    passwords[i] = new Password(passwordList.getJSONObject(i).getString("account"), "Unable to Decrypt Password", passwordList.getJSONObject(i).getInt("id"));
+                }
             }
 
             // Create ArrayAdapter using the planet list.
@@ -437,6 +449,7 @@ public class OnlineMainActivity extends AppCompatActivity {
                             e.printStackTrace();
 
                         }
+
                         if(recvJsonObject.getJSONObject("additional").getString("subaction").equals("CREATE")) {
                             Toast.makeText(getApplicationContext(), "Password Added!", Toast.LENGTH_SHORT).show();
                         }else if(recvJsonObject.getJSONObject("additional").getString("subaction").equals("DELETE")){

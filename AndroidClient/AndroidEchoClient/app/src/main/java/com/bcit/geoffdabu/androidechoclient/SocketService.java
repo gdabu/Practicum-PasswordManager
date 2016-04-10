@@ -19,7 +19,7 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 public class SocketService extends Service {
-    public static final String SERVERIP = "142.232.169.144"; //your computer IP address should be written here
+    public static final String SERVERIP = "192.168.0.226"; //your computer IP address should be written here
     public static final int SERVERPORT = 8000;
 
     private PrintWriter out;
