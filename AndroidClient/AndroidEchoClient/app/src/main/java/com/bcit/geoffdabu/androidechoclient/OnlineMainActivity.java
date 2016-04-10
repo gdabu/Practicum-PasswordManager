@@ -22,6 +22,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,6 +56,7 @@ public class OnlineMainActivity extends AppCompatActivity {
 
     Crypt aesCrypt = new Crypt();
 
+
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -81,7 +83,14 @@ public class OnlineMainActivity extends AppCompatActivity {
     }
 
     private ActionBarDrawerToggle mDrawerToggle;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_online_main, menu);
 
+        return true;
+    }
 //    @Override
 //    public boolean onPrepareOptionsMenu(Menu menu) {
 //        // If the nav drawer is open, hide action items related to the content view
@@ -95,15 +104,40 @@ public class OnlineMainActivity extends AppCompatActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle your other action bar items...
 
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+
+            case R.id.action_favorite:
+                try {
+                    JSONObject commandData = new JSONObject();
+                    commandData.put("action", "CRUD");
+                    commandData.put("subaction", "READ");
+
+                    mNetworkTask = new NetworkTask(commandData);
+                    mNetworkTask.execute((Void) null);
+
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+
+                }
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_main);
+
+
 
         String[] mPlanetTitles = { "Password List", "Network Scan" , "Logout"};
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -430,7 +430,7 @@ if __name__=='__main__':
     #     dbpassword = "bastard11"
 
 
-    db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
+    db = MySQLdb.connect(host="localhost", user="root", passwd="", db="pwd_manager")
     logger = initLogger()
 
     while 1:
