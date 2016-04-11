@@ -167,3 +167,9 @@
 2016-04-10 00:37:32,521 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.8', 8000) - Successfull Login
 2016-04-10 00:41:47,966 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.8', 8000) - Successfull Login
 2016-04-10 00:42:30,669 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.8', 8000) - Successfull Login
+2016-04-10 16:19:20,084 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.245', 8000) - Successfull Login
+2016-04-10 16:21:20,088 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.245', 8000) - Successfull Login
+2016-04-10 19:06:45,525 - __main__ - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-10 19:21:33,227 - __main__ - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-10 22:56:40,419 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-10 22:57:19,038 - __main__ - INFO - Login to user: test@test.com from IP ('192.168.0.6', 8000) - Successfull Login

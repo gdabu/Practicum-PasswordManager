@@ -1,4 +1,4 @@
-package com.bcit.geoffdabu.androidechoclient;
+package com.bcit.geoffdabu.tlstest;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,6 +13,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -77,7 +78,8 @@ public class SocketService extends Service {
             if (out != null && !out.checkError()) {
 
                 System.out.println("in sendMessage" + message);
-                out.println(message);
+                out.flush();
+                out.println("\n");
                 out.flush();
 
                 response = new JSONObject(in.readLine());

@@ -8,6 +8,8 @@ from util import *
 import ast
 import logging
 import argparse
+from socket import *
+from ssl import *
 
 from scan import *
 
@@ -57,8 +59,18 @@ def handler(clientsock, addr, db, logger):
 
     try:
         while 1:
-            
-            data = clientsock.recv(4096)
+            chunk = ""
+            message = ""
+            end = False
+            while end == False:
+                chunk = clientsock.recv(4096)
+                message += chunk
+                for char in chunk:
+                    if char == "\n":
+                        end = True
+
+
+            data = message.decode()
             print data
             # if client disconnects
             if not data:
@@ -421,8 +433,10 @@ if __name__=='__main__':
     ADDR = (args.IP, int(args.PORT))
     serversock = socket(AF_INET, SOCK_STREAM)
     serversock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    serversock.bind(ADDR)
+    serversock.bind((args.IP, int(args.PORT)))
     serversock.listen(5)
+
+    tls_server = wrap_socket(serversock, ssl_version=PROTOCOL_TLSv1, cert_reqs=CERT_NONE, server_side=True, keyfile='./key.pem', certfile='./cert.pem')
 
     # if _platform == "darwin":
     #     dbpassword = ""
@@ -435,6 +449,6 @@ if __name__=='__main__':
 
     while 1:
         print '>> Server Listening on Port: ', args.PORT
-        clientsock, addr = serversock.accept()
+        clientsock, addr = tls_server.accept()
         print '>> Connected to: ', addr
         thread.start_new_thread(handler, (clientsock, addr, db, logger))

@@ -1,4 +1,7 @@
 import json
+from socket import *
+from ssl import *
+
 # 
 # a helper function which sends formatted json through a socket.
 # 
@@ -16,5 +19,6 @@ def sendFormattedJsonMessage(clientsock, action, status, message, additional = {
     json.dumps(additional)
 
     sendMessage = json.dumps({"action" : action, "status" : status, "message" : message, "additional" :  additional})
+    sendMessage.encode()
     clientsock.sendall(sendMessage + "\n")
 
