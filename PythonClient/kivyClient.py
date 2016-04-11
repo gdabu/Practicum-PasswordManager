@@ -9,7 +9,7 @@ from PasswordCrud import *
 from AesEncryption import *
 from AESCipher import *
 
-HOST = '192.168.0.245'
+HOST = '192.168.0.6'
 # HOST = '142.232.169.214'
 # HOST = '142.232.169.184'
 PORT = 8000
