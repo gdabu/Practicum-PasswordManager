@@ -15,7 +15,7 @@ class ClientConnection():
             self.server_address = (ip, port)
             self.clientSocket.connect(self.server_address)
             self.connection = True
-        except socket.error, e:
+        except error, e:
             print "socket error: ", e
             self.connection = None
         return self.connection

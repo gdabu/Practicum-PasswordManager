@@ -15,7 +15,6 @@ def PasswordRead(db, username):
             "password" :  row[3]
         })
 
-    
     db.commit()
 
     return passwordList

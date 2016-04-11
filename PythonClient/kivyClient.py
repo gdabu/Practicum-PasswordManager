@@ -117,7 +117,7 @@ class SyncScreen(Screen):
 
         self.ids.remote_password_list.add_widget(Label(text="Remote Password List"))
         self.ids.local_password_list.add_widget(Label(text="Local Password List"))
-
+        cipher = AESCipher("nv93h50sk1zh508v");
         for entry in self.localPasswordList:
 
             passwordBtn = PasswordButton(text=entry['account'], background_color=(0.93,0.93,0.93,1))
