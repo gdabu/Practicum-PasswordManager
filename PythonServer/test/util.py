@@ -11,14 +11,14 @@ from ssl import *
 # @param message - A String describing the status of the server operation 
 # @param additional - JSON String of any additional fields that are to be sent
 # 
-# 
-# 
 def sendFormattedJsonMessage(clientsock, action, status, message, additional = {}):
     
     # used 
     json.dumps(additional)
 
     sendMessage = json.dumps({"action" : action, "status" : status, "message" : message, "additional" :  additional})
-    sendMessage.encode()
+    sendMessage = sendMessage.encode()
     clientsock.sendall(sendMessage + "\n")
+
+    return sendMessage
 

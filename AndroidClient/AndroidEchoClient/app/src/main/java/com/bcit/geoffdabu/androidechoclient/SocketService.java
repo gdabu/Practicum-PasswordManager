@@ -29,7 +29,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 public class SocketService extends Service {
-    public static final String SERVERIP = "192.168.0.6"; //your computer IP address should be written here
+    public static final String SERVERIP = "142.232.169.248"; //your computer IP address should be written here
     public static final int SERVERPORT = 8000;
 
     private PrintWriter out;

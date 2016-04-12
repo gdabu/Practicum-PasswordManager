@@ -9,8 +9,8 @@ class ClientConnection():
 
     def connect_to_server(self, ip, port):
         try:
+            print "connecting"
             self.clientsock = socket(AF_INET, SOCK_STREAM)
-            # self.clientSocket.settimeout(5)
             self.clientSocket = wrap_socket(self.clientsock, ssl_version=PROTOCOL_TLSv1, cert_reqs=CERT_NONE)
             self.server_address = (ip, port)
             self.clientSocket.connect(self.server_address)

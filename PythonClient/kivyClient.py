@@ -9,7 +9,7 @@ from PasswordCrud import *
 from AesEncryption import *
 from AESCipher import *
 
-HOST = '192.168.0.6'
+HOST = '142.232.169.224'
 # HOST = '142.232.169.214'
 # HOST = '142.232.169.184'
 PORT = 8000
@@ -165,7 +165,7 @@ class RegistrationScreen(Screen):
             self.ids.registration_status.text = "Text Input Empty"
             return
 
-        # connectivity = self.parent.clientConnection.connect_to_server(HOST, PORT)
+        
 
         if self.parent.clientConnection.connection != None:
 
@@ -212,7 +212,8 @@ class LoginScreen(Screen):
     twoFactor_status = BooleanProperty('')
 
     def connect(self):
-        self.parent.clientConnection.connect_to_server(HOST, PORT)
+        # self.parent.clientConnection.connect_to_server(HOST, PORT)
+        pass
 
     def login(self, username, password, connectivity):
         recvJsonData = None
@@ -534,6 +535,8 @@ class MainScreenOffline(Screen):
         self.parent.current = "login_screen"
         pass
 
+init = 0
+
 class ScreenManagement(ScreenManager):
     clientConnection = None
     connected = None
@@ -542,14 +545,16 @@ class ScreenManagement(ScreenManager):
 
     def __init__(self, **kwargs):
         super(ScreenManager, self).__init__(**kwargs)
-        self.clientConnection = ClientConnection()
-        self.connected = self.clientConnection.connect_to_server(HOST, PORT)
-        self.db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
-        self.cursor = self.db.cursor()
         
+        global init
 
-        print self.db
-        print self.cursor
+        if init == 0:
+            self.clientConnection = ClientConnection()
+            self.connected = self.clientConnection.connect_to_server(HOST, PORT)
+            self.db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
+            self.cursor = self.db.cursor()
+
+        init = init + 1
 
 presentation = Builder.load_file("main.kv")
 
