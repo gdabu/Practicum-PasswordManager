@@ -16,7 +16,7 @@ def initLogger():
     handler.setFormatter(formatter)
 
     # add the handlers to the logger
-
+    
     logger.addHandler(handler)
 
     return logger

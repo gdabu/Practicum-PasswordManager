@@ -16,6 +16,7 @@ from PasswordCrud import *
 
 netscan = '142.232.169.0/24'
 
+logging.basicConfig(filename='../logs/debug.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def tlsReceive(clientsock, bufferSize):
     chunk = ""
@@ -59,9 +60,8 @@ def handler(clientsock, addr, db, logger):
                 print addr, "- Connection Closed"
                 break
 
-            
-            commandData = json.loads(data.rstrip())
-            print data
+            commandData = json.loads(data.rstrip())            
+
             # 
             # Register
             # 
@@ -71,9 +71,6 @@ def handler(clientsock, addr, db, logger):
                     
                     plaintextPassword = commandData['password'].encode('utf-8')
                     hashedPassword = bcrypt.hashpw(plaintextPassword, bcrypt.gensalt())
-                    # insert registered username and password
-                    # cursor.execute("insert into users (username, password) values ('" + commandData['username'] + "', '" + hashedPassword + "')")
-                    # db.commit()
                     UserCreate(db, commandData['username'], hashedPassword)
                     sendFormattedJsonMessage(clientsock, "REGISTER", 200, "Registration Successfull", {"username" : commandData['username'], "password" : hashedPassword})
 
@@ -95,10 +92,6 @@ def handler(clientsock, addr, db, logger):
             # 
             elif commandData['action'] == "LOGIN":
 
-                # cursor.execute("select * from users where username = '" + commandData['username'] + "'" )
-                # user = cursor.fetchall()
-                # db.commit()
-
                 attemptedUser = GetUser(db, commandData['username'])
                 attemptedPassword = commandData['password'].encode('utf-8')
                 
@@ -109,12 +102,7 @@ def handler(clientsock, addr, db, logger):
                     failedLoginCount += 1
 
                 else:
-                    # print "user found"
-                    # print user
-                    # for attemptedUser[0] in user:
-                        # print attemptedUser[0][1]
-                        # print len(attemptedUser[0][1])
-                        
+                    
                     if attemptedUser[0][1] == bcrypt.hashpw(attemptedPassword, attemptedUser[0][1]):
                         
                         # CHECK FOR 2FA REQUIREMENT
@@ -122,14 +110,11 @@ def handler(clientsock, addr, db, logger):
                             
                             loggedIn = True
                             loggedInUser = attemptedUser[0][0]
-                            print "LOGGED SHIT"
                             logger.info('Login to user: %s from IP %s - Successfull Login', commandData['username'], clientsock.getsockname())
                             sendFormattedJsonMessage(clientsock, "LOGIN", 200, "LOGIN Successfull", {'tfa_enabled':False})
                             failedLoginCount = 0
 
                         else:
-                            print "2FA Login Required"
-
                             attemptedLogUser = attemptedUser[0][0]
                             secret = random.randint(10000,99999)
                             send_email("devbcit@gmail.com","bastard11", "geoffdabu@gmail.com", "Khaled Keys: 2FA Login Key", secret)
@@ -141,8 +126,6 @@ def handler(clientsock, addr, db, logger):
                             # break
 
                     else:
-                        print "Wrong Password"
-                        print "LOGGED SHIT"
                         logger.warn('Login attempt to user: %s from IP %s - Wrong Password', commandData['username'], clientsock.getsockname())
                         sendFormattedJsonMessage(clientsock, "LOGIN", 402, "LOGIN Unsuccessfull: WRONG PASSWORD")
                         failedLoginCount += 1
@@ -163,10 +146,6 @@ def handler(clientsock, addr, db, logger):
             # USER should only be able to make a 2FA_LOGIN attempt if they have logged in with a correct user password combo 
             # 
             elif commandData['action'] == "2FA_LOGIN" and attemptedLogUser != "":
-
-                # cursor.execute("select * from users where username = '" + attemptedLogUser + "'" )
-
-                # user = cursor.fetchall()
 
                 attemptedUser = GetUser(db, attemptedLogUser)
 
@@ -193,7 +172,7 @@ def handler(clientsock, addr, db, logger):
             # 2FA_ENABLE
             #
             elif commandData['action'] == "2FA_ENABLE" and loggedIn == True:
-                # tfa_enabled = 0
+                
                 tfa_status = ""
                 if commandData['enabled'] == True:
                     tfa_enabled = 1
@@ -252,16 +231,25 @@ def handler(clientsock, addr, db, logger):
             # 
             elif commandData['action'] == "CRUD" and loggedIn == True:
 
+                # 
+                # CREATE
+                # 
                 if commandData['subaction'] == "CREATE":
                     
                     PasswordCreate(db, loggedInUser, commandData['entry']['account'], commandData['entry']['accountPassword'])
                     sendFormattedJsonMessage(clientsock, commandData['action'], 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
-
+                
+                # 
+                # READ
+                # 
                 elif commandData['subaction'] == "READ":
                     
                     passwordList = PasswordRead(db, loggedInUser)
                     sendFormattedJsonMessage(clientsock, commandData['action'], 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction'], 'passwords' : passwordList})
-
+                
+                # 
+                # UPDATE
+                # 
                 elif commandData['subaction'] == "UPDATE":
 
                     try:
@@ -273,6 +261,9 @@ def handler(clientsock, addr, db, logger):
                         print e
                         sendFormattedJsonMessage(clientsock, commandData['action'], 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
                 
+                # 
+                # DELETE
+                # 
                 elif commandData['subaction'] == "DELETE":
 
                     try:
@@ -284,8 +275,6 @@ def handler(clientsock, addr, db, logger):
                         sendFormattedJsonMessage(clientsock, commandData['action'], 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
                 
                 else:
-
-                    print "Not a Valid Crud Command"
                     sendFormattedJsonMessage(clientsock, commandData['action'], 200, "COMMAND EXECUTED", {'subaction' : commandData['subaction']})
 
                 continue
@@ -301,7 +290,7 @@ def handler(clientsock, addr, db, logger):
             # 
             # NOT LOGGED IN
             # 
-            elif (commandData['action'] == "SYNC" or commandData['action'] == "CRUD") and loggedIn == False:
+            elif (commandData['action'] == "SYNC" or commandData['action'] == "CRUD" or commandData['action'] == "SCAN" or or commandData['action'] == "2FA_ENABLE") and loggedIn == False:
                 print addr, "- Not Logged In"
                 sendFormattedJsonMessage(clientsock, commandData['action'], 400, "COMMAND Unsuccessfull: You must be logged in")
                 continue
