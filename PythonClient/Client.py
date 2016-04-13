@@ -4,10 +4,10 @@
 
 import sys
 sys.path.insert(0, './util')
+sys.path.insert(0, './modules')
 
 from kivy.app import App
 from kivy.lang import Builder
-
 
 from MainScreenOffline import MainScreenOffline
 from MainScreenOnline import MainScreenOnline
