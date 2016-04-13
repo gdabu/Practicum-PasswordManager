@@ -42,3 +42,18 @@ def PasswordsCreate(db, username, passwordList):
 
 def PasswordUpdate(db, username, column, newValue, passwordId):
     cursor.execute("update passwords set " + column + "='" + newValue + "' where id = " + `passwordId` + " and username = '" + username + "'")
+
+def UserCreate(db, username, password):
+    cursor = db.cursor()
+    cursor.execute("insert into users (username, password) values ('" + username + "', '" + password + "')")
+    db.commit()
+
+def GetUser(db, username):
+    cursor = db.cursor()
+    cursor.execute("select * from users where username = '" + username + "'")
+
+    user = cursor.fetchall()
+    db.commit()
+
+    return user
+

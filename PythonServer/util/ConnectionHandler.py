@@ -16,8 +16,6 @@ from PasswordCrud import *
 
 netscan = '142.232.169.0/24'
 
-logging.basicConfig(filename='../logs/debug.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 def tlsReceive(clientsock, bufferSize):
     chunk = ""
     data = ""
@@ -290,7 +288,7 @@ def handler(clientsock, addr, db, logger):
             # 
             # NOT LOGGED IN
             # 
-            elif (commandData['action'] == "SYNC" or commandData['action'] == "CRUD" or commandData['action'] == "SCAN" or or commandData['action'] == "2FA_ENABLE") and loggedIn == False:
+            elif (commandData['action'] == "SYNC" or commandData['action'] == "CRUD" or commandData['action'] == "SCAN" or commandData['action'] == "2FA_ENABLE") and loggedIn == False:
                 print addr, "- Not Logged In"
                 sendFormattedJsonMessage(clientsock, commandData['action'], 400, "COMMAND Unsuccessfull: You must be logged in")
                 continue
