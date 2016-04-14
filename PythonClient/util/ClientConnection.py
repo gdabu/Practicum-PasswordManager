@@ -8,16 +8,16 @@ class ClientConnection():
     server_address = None
 
     def connect_to_server(self, ip, port):
-        try:
-            print "connecting"
-            self.clientsock = socket(AF_INET, SOCK_STREAM)
-            self.clientSocket = wrap_socket(self.clientsock, ssl_version=PROTOCOL_TLSv1, cert_reqs=CERT_NONE)
-            self.server_address = (ip, port)
-            self.clientSocket.connect(self.server_address)
-            self.connection = True
-        except error, e:
-            print "socket error: ", e
-            self.connection = None
+        # try:
+        self.clientsock = socket(AF_INET, SOCK_STREAM)
+        self.clientSocket = wrap_socket(self.clientsock, ssl_version=PROTOCOL_TLSv1, cert_reqs=CERT_NONE)
+        self.server_address = (ip, port)
+        self.clientSocket.connect(self.server_address)
+        self.connection = True
+        # except error, e:
+        #     print "socket error: ", e
+        #     self.connection = None
+        #     raise e
         return self.connection
     
     def print_message(self, message):
@@ -28,7 +28,6 @@ class ClientConnection():
             self.clientSocket.sendall((message + "\n").encode())
 
     def receive_response(self):
-        # data = self.clientSocket.recv(4096)
         chunk = ""
         message = ""
         end = False

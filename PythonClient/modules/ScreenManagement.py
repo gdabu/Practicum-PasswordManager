@@ -1,10 +1,11 @@
 import MySQLdb
+import socket
 
 from kivy.uix.screenmanager import ScreenManager
 
 from ClientConnection import ClientConnection
 
-HOST = '142.232.169.224'
+HOST = '192.168.0.23'
 PORT = 8000
 
 # TODO: Kivy instantiates TWO ScreenManagement objects, and therefore creates to connections. 
@@ -23,8 +24,13 @@ class ScreenManagement(ScreenManager):
         global init
 
         if init == 0:
-            self.clientConnection = ClientConnection()
-            self.connected = self.clientConnection.connect_to_server(HOST, PORT)
+            
+            try:
+                self.clientConnection = ClientConnection()
+                self.connected = self.clientConnection.connect_to_server(HOST, PORT)
+            except socket.error as e:
+                self.connected = None
+
             self.db = MySQLdb.connect(host="localhost", user="root", passwd="bastard11", db="pwd_manager")
             self.cursor = self.db.cursor()
 

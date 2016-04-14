@@ -1,13 +1,13 @@
 import logging
 
-def initLogger():
+def initLogger(logPath):
 
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 
     # create a file handler
 
-    handler = logging.FileHandler('./logs/login.log')
+    handler = logging.FileHandler(logPath)
     handler.setLevel(logging.INFO)
 
     # create a logging format

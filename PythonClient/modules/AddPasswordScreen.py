@@ -35,6 +35,8 @@ class AddPasswordScreen(Screen):
             self.parent.clientConnection.terminate_connection()
             self.parent.current = "login_screen"
 
+        return recvJsonData
+
     def screenRedirect(self, screen):
         self.ids.new_account.text = ""
         self.ids.new_password.text = ""
