@@ -434,7 +434,7 @@ if __name__=='__main__':
         if connection == "ONLINE":
 
             clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            server_address = ('142.232.169.224', 8000)
+            server_address = ('192.168.0.6', 8000)
             print 'connecting to %s port %s' % server_address
             clientSocket.connect(server_address)
             onlineHandler(clientSocket, db)

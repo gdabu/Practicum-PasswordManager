@@ -3,6 +3,7 @@ import MySQLdb
 import random
 import bcrypt
 import ast
+import re
 
 from socket import *
 from ssl import *
@@ -66,6 +67,13 @@ def handler(clientsock, addr, db, logger):
             if commandData['action'] == "REGISTER":
 
                 try: 
+
+                    addressToVerify = commandData['username']
+                    match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', addressToVerify)
+
+                    if match == None:
+                        sendFormattedJsonMessage(clientsock, "REGISTER", 402, "Invalid Email")
+                        continue
                     
                     plaintextPassword = commandData['password'].encode('utf-8')
                     hashedPassword = bcrypt.hashpw(plaintextPassword, bcrypt.gensalt())
@@ -172,7 +180,7 @@ def handler(clientsock, addr, db, logger):
             elif commandData['action'] == "2FA_ENABLE" and loggedIn == True:
                 
                 tfa_status = ""
-                if commandData['enabled'] == True:
+                if commandData['enabled'] == "True":
                     tfa_enabled = 1
                     tfa_status = "Enabled"
                 else:

@@ -7,6 +7,9 @@ class ClientConnection():
     clientSocket = None
     server_address = None
 
+    def validate_message(self, message):
+        json.loads(message)
+
     def connect_to_server(self, ip, port):
         # try:
         self.clientsock = socket(AF_INET, SOCK_STREAM)
@@ -24,6 +27,7 @@ class ClientConnection():
         print message
 
     def send_command(self, message):
+        self.validate_message(message)
         if self.connection:
             self.clientSocket.sendall((message + "\n").encode())
 
@@ -46,7 +50,8 @@ class ClientConnection():
 
     def send_receive(self, message):
         self.send_command(message)
-        return self.receive_response()
+        response = self.receive_response()
+        return response
 
     def terminate_connection(self):
         self.connection = None
