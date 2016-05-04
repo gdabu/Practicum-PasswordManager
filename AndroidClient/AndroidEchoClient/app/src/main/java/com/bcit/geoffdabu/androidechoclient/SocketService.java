@@ -7,10 +7,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import android.app.Service;
 import android.content.Intent;
@@ -29,7 +34,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 public class SocketService extends Service {
-    public static final String SERVERIP = "142.232.169.248"; //your computer IP address should be written here
+    public static final String SERVERIP = "142.232.169.131"; //your computer IP address should be written here
     public static final int SERVERPORT = 8000;
 
     private PrintWriter out;
@@ -100,8 +105,8 @@ public class SocketService extends Service {
         return START_STICKY;
     }
 
-    private Socket getConnection(String ip, int port) throws IOException {
-        try {
+    private Socket getConnection(String ip, int port) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
+
             KeyStore trustStore = KeyStore.getInstance("BKS");
 
             InputStream trustStoreStream = this.getResources().openRawResource(R.raw.server);
@@ -115,10 +120,6 @@ public class SocketService extends Service {
             SSLSocketFactory factory = sslContext.getSocketFactory();
             SSLSocket socket = (SSLSocket) factory.createSocket(ip, port);
             return socket;
-        } catch (GeneralSecurityException e) {
-            Log.e(this.getClass().toString(), "Exception while creating context: ", e);
-            throw new IOException("Could not connect to SSL Server", e);
-        }
     }
 
 
@@ -136,7 +137,6 @@ public class SocketService extends Service {
 
 //                socket = new Socket(serverAddr, SERVERPORT);
                 socket = getConnection(SERVERIP, SERVERPORT);
-
                 try {
 
 
@@ -152,13 +152,13 @@ public class SocketService extends Service {
                 } catch (Exception e) {
 
                     Log.e("TCP", "S: Error", e);
-                    socket = null;
+                    onDestroy();
 
                 }
             } catch (Exception e) {
 
                 Log.e("TCP", "C: Error", e);
-                socket = null;
+                onDestroy();
 
             }
 

@@ -5,7 +5,6 @@
 import os
 
 def blockIp(ip, duration):
-	print "BLOCKING MOFO================>"
-	retvalue = os.system("iptables -I INPUT -s " + ip + " -j DROP")
-	retvalue2 = os.system("echo 'iptables -D INPUT -s " + ip + " -j DROP' | at now + " + `duration` + " min")
+	retvalue = os.system("iptables -I INPUT -s " + ip + " -p tcp --destination-port " + `8000` + " -j DROP")
+	retvalue2 = os.system("echo 'iptables -D INPUT -s " + ip + " -p tcp --destination-port " + `8000` + " -j DROP' | at now + " + `duration` + " min")
 	print retvalue, retvalue2

@@ -75,7 +75,7 @@ class SyncScreen(Screen):
             passwordBtn.pw_account=entry['account']
             try:
                 passwordBtn.pw_password=cipher.decrypt(entry['password'])
-            except Exception, e:
+            except Exception, e: 
                 print e
                 passwordBtn.pw_password="Unable to Decrypt"
             passwordBtn.pw_id=entry['id']

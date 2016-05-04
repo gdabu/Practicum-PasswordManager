@@ -39,7 +39,6 @@ class LoginScreen(Screen):
 
                 else:
                     self.login_status = "Unsuccessful Login"
-                    self.parent.clientConnection.print_message("Unsuccessful Login")
             else:
                 self.login_status = "Unable to Connect"    
                 self.parent.clientConnection.print_message("Unable to Connect")

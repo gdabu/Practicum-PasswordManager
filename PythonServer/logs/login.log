@@ -621,3 +621,290 @@
 2016-04-16 18:22:26,429 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
 2016-04-16 18:22:26,766 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
 2016-04-16 18:22:27,113 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:28:05,982 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:28:06,328 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:28:06,679 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:28:07,026 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:28:07,368 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:28:07,697 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:29:31,704 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:29:32,038 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:29:32,393 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:29:32,738 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:29:33,077 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 18:29:33,403 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 22:19:08,213 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 22:19:08,535 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 22:19:08,884 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 22:19:09,218 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 22:19:09,555 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-16 22:19:09,885 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 20:40:45,161 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 20:40:45,475 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 20:40:45,791 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 20:40:46,105 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 20:40:46,417 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 20:40:46,723 - log - INFO - Login to user: unittest_username from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 20:45:22,901 - log - INFO - Login to user: test@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-17 21:18:15,234 - log - INFO - Login to user: test@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 16:07:55,641 - log - INFO - Login to user: test@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 16:21:28,306 - log - INFO - Login to user: test@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 16:40:25,761 - log - WARNING - Login attempt to user: test2@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-22 16:40:32,849 - log - INFO - Login to user: test2@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:26:31,895 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:28:05,493 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:28:16,902 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:28:53,377 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:29:50,085 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:30:54,212 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-22 17:30:55,942 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-22 17:31:09,827 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:31:44,309 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:34:20,196 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:35:45,445 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:36:29,258 - log - WARNING - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull 2FA Login
+2016-04-22 17:37:59,883 - log - WARNING - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull 2FA Login
+2016-04-22 17:38:11,764 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 17:59:11,999 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-22 18:04:56,336 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-22 18:10:04,394 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-22 18:10:05,024 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-22 18:15:14,113 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-22 18:15:59,142 - log - WARNING - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull 2FA Login
+2016-04-23 16:28:58,020 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-23 16:33:23,303 - log - WARNING - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull 2FA Login
+2016-04-24 10:17:34,235 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 11:00:33,799 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 11:05:35,822 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:05:37,267 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:07:22,082 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 11:07:28,988 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 11:32:56,762 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:32:56,919 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:33:07,397 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 11:39:59,568 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:40:35,614 - log - WARNING - Login attempt to user: dev@gmail.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:40:52,024 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:41:11,300 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:44:09,914 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:44:41,250 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:45:26,746 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:45:29,224 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 11:45:38,620 - log - WARNING - Login attempt to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 11:45:45,993 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 11:46:55,033 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 11:52:57,084 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 12:01:55,728 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 12:02:09,701 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 12:21:11,164 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 12:34:19,769 - log - INFO - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 14:31:06,978 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 14:31:25,998 - log - INFO - Login to user: test2@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 14:31:58,915 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 14:32:05,886 - log - INFO - Login to user: test2@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 18:40:37,558 - log - WARNING - Login attempt to user: devbcit@gmail.com from IP ('192.168.0.79', 8000) - Invalid Username
+2016-04-24 18:40:40,285 - log - WARNING - Login attempt to user: devbcit@gmail.com from IP ('192.168.0.79', 8000) - Invalid Username
+2016-04-24 18:40:41,462 - log - WARNING - Login attempt to user: devbcit@gmail.com from IP ('192.168.0.79', 8000) - Invalid Username
+2016-04-24 18:40:42,321 - log - WARNING - Login attempt to user: devbcit@gmail.com from IP ('192.168.0.79', 8000) - Invalid Username
+2016-04-24 18:40:43,184 - log - WARNING - Login attempt to user: devbcit@gmail.com from IP ('192.168.0.79', 8000) - Invalid Username
+2016-04-24 18:40:43,185 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 18:46:09,220 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 18:46:16,480 - log - WARNING - Login attempt to user: devbcit@gmail.com from IP ('192.168.0.79', 8000) - Invalid Username
+2016-04-24 18:46:19,220 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:46:21,042 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:46:21,998 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:46:22,878 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:46:23,699 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:46:23,699 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 18:52:00,058 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:01,665 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:02,822 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:03,846 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:04,771 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:04,771 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 18:52:40,668 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:42,110 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:43,161 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:44,174 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:45,236 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:45,237 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 18:52:46,498 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:48,146 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:52:54,096 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:04,142 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:05,753 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:06,431 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:07,117 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:11,875 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:14,428 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:15,333 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:16,130 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:17,212 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:18,153 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:53:18,732 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:21,732 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:22,646 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:33,369 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:34,021 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:34,598 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:35,350 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:35,708 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:36,068 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:36,430 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:36,794 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:54:37,180 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:56:16,094 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 18:56:23,788 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:56:24,955 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:56:25,741 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:56:26,453 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:56:27,420 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:56:27,421 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 18:56:31,198 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:58:15,739 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:58:17,614 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:58:18,715 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:58:19,629 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:58:20,618 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 18:58:20,618 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 18:58:32,322 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:00:10,556 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:00:11,742 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:00:12,336 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:00:12,879 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:00:13,267 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:00:13,268 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:00:13,634 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:00:53,984 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:01:02,584 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:03,738 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:04,170 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:04,568 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:04,914 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:04,914 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:01:05,299 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:14,893 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:45,425 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:47,646 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:48,793 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:50,032 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:01:50,032 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:01:52,239 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:02:28,962 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:02:35,803 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:02:36,997 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:02:37,809 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:02:38,907 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:02:39,994 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:02:39,995 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:02:41,351 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:03:20,685 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:03:28,227 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:05:25,763 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:05:27,368 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:05:28,332 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:05:29,652 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:05:30,766 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:05:30,766 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:05:33,080 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:06:13,708 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:07:03,414 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:07:10,837 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:07:11,497 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:07:12,511 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:07:13,440 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:07:14,949 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:07:14,949 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:07:21,124 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:08:08,100 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:08:08,863 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:08:09,624 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:08:10,422 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:08:11,181 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:08:11,182 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:08:12,494 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:09:37,885 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:09:42,936 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:09:43,675 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:09:44,452 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:09:45,405 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:09:46,490 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:09:46,490 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:14:19,855 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:14:25,994 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:14:26,619 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:14:27,016 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:14:27,420 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:14:27,770 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.79', 8000) - Wrong Password
+2016-04-24 19:14:27,770 - log - WARNING - Blocking IP: ('192.168.0.79', 8000)
+2016-04-24 19:20:34,923 - log - INFO - Login to user: test@test.com from IP ('192.168.0.79', 8000) - Successfull Login
+2016-04-24 19:22:09,398 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:10,975 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:11,656 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:12,652 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:13,506 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:13,507 - log - WARNING - Blocking IP: ('192.168.0.81', 8000)
+2016-04-24 19:22:14,671 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:51,429 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:51,957 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:52,298 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:52,647 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:52,647 - log - WARNING - Blocking IP: ('192.168.0.81', 8000)
+2016-04-24 19:22:53,033 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:53,391 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:22:53,774 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:50,072 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:50,829 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:51,212 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:51,606 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:51,993 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:51,994 - log - WARNING - Blocking IP: ('192.168.0.81', 8000)
+2016-04-24 19:24:52,352 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:52,744 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:53,080 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:24:53,420 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:39:26,494 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:39:27,130 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:39:27,560 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:39:27,957 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:39:28,298 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:39:28,298 - log - WARNING - Blocking IP: ('192.168.0.81', 8000)
+2016-04-24 19:44:58,462 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:44:58,860 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:44:59,224 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:44:59,588 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:45:02,207 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.81', 8000) - Wrong Password
+2016-04-24 19:45:02,208 - log - WARNING - Blocking IP: ('192.168.0.81', 8000)
+2016-04-24 19:52:34,185 - log - INFO - Login to user: test@test.com from IP ('192.168.0.83', 8000) - Successfull Login
+2016-04-24 22:05:01,565 - log - WARNING - Login attempt to user:   test3@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 22:05:09,903 - log - WARNING - Login attempt to user:   test3@test.com from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 22:09:18,255 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 22:19:53,254 - log - WARNING - Login to user: devbcit@gmail.com from IP ('192.168.0.6', 8000) - Successfull 2FA Login
+2016-04-24 22:25:57,714 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:20:43,482 - log - WARNING - Login attempt to user: test@test from IP ('192.168.0.6', 8000) - Invalid Username
+2016-04-24 23:20:48,152 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:20:50,462 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:20:51,411 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:20:56,089 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:20:56,090 - log - WARNING - Blocking IP: ('192.168.0.6', 8000)
+2016-04-24 23:20:57,026 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:20:57,723 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:20:58,455 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:21:57,101 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:21:57,945 - log - WARNING - Login attempt to user: test@test.com from IP ('192.168.0.6', 8000) - Wrong Password
+2016-04-24 23:21:57,945 - log - WARNING - Blocking IP: ('192.168.0.6', 8000)
+2016-04-24 23:23:41,925 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:23:44,691 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:23:56,463 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:24:31,479 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:35:25,482 - log - INFO - Login to user: test@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:35:31,161 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:35:37,717 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:36:46,114 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-04-24 23:37:10,902 - log - INFO - Login to user: test3@test.com from IP ('192.168.0.6', 8000) - Successfull Login
+2016-05-02 14:26:05,013 - log - INFO - Login to user: test@test.com from IP ('142.232.169.177', 8000) - Successfull Login
+2016-05-02 14:26:34,152 - log - INFO - Login to user: test@test.com from IP ('142.232.169.177', 8000) - Successfull Login
+2016-05-04 13:13:53,945 - log - INFO - Login to user: t@t.com from IP ('142.232.169.131', 8000) - Successfull Login
+2016-05-04 14:37:16,659 - log - INFO - Login to user: t@t.com from IP ('142.232.169.131', 8000) - Successfull Login
+2016-05-04 14:44:00,987 - log - INFO - Login to user: t@t.com from IP ('142.232.169.131', 8000) - Successfull Login
+2016-05-04 14:45:05,811 - log - INFO - Login to user: g@g.com from IP ('142.232.169.131', 8000) - Successfull Login

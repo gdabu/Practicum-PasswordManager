@@ -22,6 +22,7 @@ class MainScreenOnline(Screen):
     def switchTwoFactor(self, active):
         commandData = json.dumps({"action" : "2FA_ENABLE", "enabled" : active})
         recvJsonData = self.parent.clientConnection.send_receive(commandData)
+        print recvJsonData
 
     def goToAddPasswordScreen(self):
         self.parent.current = "add_password_screen"

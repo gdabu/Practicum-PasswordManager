@@ -22,6 +22,7 @@ class AddPasswordScreen(Screen):
             try:
                 encrypted_password = cipher.encrypt(new_password)
             except Exception, e:
+                print e
                 self.ids.add_password_status.text = "Unable To Encrypt Password"
                 return
             
@@ -32,6 +33,7 @@ class AddPasswordScreen(Screen):
             self.screenRedirect("main_screen_online")
 
         except socket.error, e:
+            print e
             self.parent.clientConnection.terminate_connection()
             self.parent.current = "login_screen"
 

@@ -1,12 +1,20 @@
 import MySQLdb
 import socket
+import ConfigParser
 
 from kivy.uix.screenmanager import ScreenManager
-
 from ClientConnection import ClientConnection
 
-HOST = '192.168.0.23'
-PORT = 8000
+Config = ConfigParser.ConfigParser()
+Config.read("./config/config.ini")
+
+
+
+HOST = Config.get('Server', 'ServerIp')
+PORT = int(Config.get('Server', 'ServerPort'))
+# HOST = '142.232.169.177'
+# PORT = 8000
+
 
 # TODO: Kivy instantiates TWO ScreenManagement objects, and therefore creates to connections. 
 # @param init is used to prevent the second ScnreenManagement instance from making a connection

@@ -11,16 +11,11 @@ class ClientConnection():
         json.loads(message)
 
     def connect_to_server(self, ip, port):
-        # try:
         self.clientsock = socket(AF_INET, SOCK_STREAM)
         self.clientSocket = wrap_socket(self.clientsock, ssl_version=PROTOCOL_TLSv1, cert_reqs=CERT_NONE)
         self.server_address = (ip, port)
         self.clientSocket.connect(self.server_address)
         self.connection = True
-        # except error, e:
-        #     print "socket error: ", e
-        #     self.connection = None
-        #     raise e
         return self.connection
     
     def print_message(self, message):
@@ -31,22 +26,30 @@ class ClientConnection():
         if self.connection:
             self.clientSocket.sendall((message + "\n").encode())
 
-    def receive_response(self):
+    def tlsReceive(self, clientsock, bufferSize):
         chunk = ""
-        message = ""
-        end = False
-        while end == False:
-            chunk = self.clientSocket.recv(4096)
-            message += chunk
-            for char in chunk:
-                if char == "\n" or not chunk:
-                    end = True
-        if not message:
+        data = ""
+        
+        while 1:
+            chunk = clientsock.recv(bufferSize)
+            data += chunk
+            
+            if not data or chunk[len(chunk) - 1] == "\n":
+                print data
+                return data.decode()
+
+    def receive_response(self):
+
+        data = self.tlsReceive(self.clientSocket, 4096)
+                
+        # if client disconnects
+        if not data:
             self.connection = False
             self.clientSocket.close()
             raise socket.error
         else:
-            return json.loads(message.decode().rstrip('\n'))
+            return json.loads(data.decode().rstrip('\n'))
+
 
     def send_receive(self, message):
         self.send_command(message)

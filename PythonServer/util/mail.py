@@ -1,13 +1,14 @@
-def send_email(user, pwd, recipient, subject, body):
-    import smtplib
+import smtplib
 
+def send_email(user, pwd, recipient, subject, body):
+    print recipient
     gmail_user = user
     gmail_pwd = pwd
     FROM = user
     TO = recipient if type(recipient) is list else [recipient]
     SUBJECT = subject
     TEXT = body
-
+    print TO
     # Prepare actual message
     message = """\From: %s\nTo: %s\nSubject: %s\n\n%s
     """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
@@ -19,7 +20,8 @@ def send_email(user, pwd, recipient, subject, body):
         server.sendmail(FROM, TO, message)
         server.close()
         print 'successfully sent the mail'
-    except:
+    except Exception, e:
+        print e
         print "failed to send mail"
 
 

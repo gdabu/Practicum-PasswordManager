@@ -12,6 +12,7 @@ import android.content.Intent;
 
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -41,17 +42,14 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -137,6 +135,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -535,8 +536,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }
 
                 } else {
+//                    TODO: offline connection
+
                     System.out.println("Unable to Connect");
                     loginStatus = "fail_noConnection";
+
                     return false;
                 }
 
@@ -616,8 +620,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 } else if ((loginStatus.equals("fail_noConnection"))) {
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "No Connection", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Logging In Locally", Toast.LENGTH_SHORT);
                     toast.show();
+                    doUnbindService();
+
+                    UserDatabaseHandler userDb = new UserDatabaseHandler(LoginActivity.this);
+                    try {
+                        User loggedInUser = userDb.getUser(mEmail);
+
+
+                        if (mPassword.equals(loggedInUser.getPassword())) {
+                            toast = Toast.makeText(getApplicationContext(), "Successful Login", Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            toast = Toast.makeText(getApplicationContext(), "Failed Local Login", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    }catch (CursorIndexOutOfBoundsException e){
+                        toast = Toast.makeText(getApplicationContext(), "Failed Local Login", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
+
 
                 } else {
 
@@ -680,8 +704,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 } else if (recvJsonObject.getString("action").equals("REGISTER")) {
                     if (recvJsonObject.getInt("status") == 200) {
                         Toast toast = Toast.makeText(LoginActivity.this, "Registration Successful", Toast.LENGTH_SHORT);
+
+                        UserDatabaseHandler userDb = new UserDatabaseHandler(LoginActivity.this);
+                        userDb.addUser(new User(recvJsonObject.getJSONObject("additional").getString("username"), sendJsonObject.getString("password")));
+
                         toast.show();
-                    } if(recvJsonObject.getInt("status") == 401) {
+                    } else if(recvJsonObject.getInt("status") == 401) {
                         Toast toast = Toast.makeText(LoginActivity.this, "Username Taken", Toast.LENGTH_SHORT);
                         toast.show();
                     }else {
