@@ -6,13 +6,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by geoffdabu on 2016-04-26.
  */
 public class UserDatabaseHandler extends SQLiteOpenHelper {
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     // Database Name
     private static final String DATABASE_NAME = "pwd_manager";
@@ -104,6 +107,53 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
         // Inserting Row
         db.insert(TABLE_USERS, null, values);
         db.close(); // Closing database connection
+    }
+
+    public void addPassword(Password password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_USERNAME, password.getUsername()); // Contact Name
+        values.put(KEY_PASSWORD, password.getPassword()); // Contact Phone Number
+        values.put(KEY_ACCOUNT, password.getAccount());
+
+        // Inserting Row
+        db.insert(TABLE_PASSWORDS, null, values);
+        db.close(); // Closing database connection
+    }
+
+    public void deletePassword(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PASSWORDS, KEY_ID + " = ?",
+                new String[] { String.valueOf(id) });
+        db.close();
+    }
+
+    // Getting single contact
+    public List<Password> getUserPasswords(String username) {
+
+        List<Password> passwordList = new ArrayList<Password>();
+        // Select All Query
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(TABLE_PASSWORDS, new String[]{KEY_USERNAME, KEY_ACCOUNT, KEY_PASSWORD, KEY_ID}, KEY_USERNAME + "=?", new String[]{String.valueOf(username)}, null, null, null, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Password password = new Password();
+                password.setUsername(cursor.getString(0));
+                password.setAccount(cursor.getString(1));
+                password.setPassword(cursor.getString(2));
+                password.setId(Integer.parseInt(cursor.getString(3)));
+                // Adding contact to list
+                passwordList.add(password);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return passwordList;
+
     }
 
 }

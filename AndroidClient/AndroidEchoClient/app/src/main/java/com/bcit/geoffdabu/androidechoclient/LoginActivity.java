@@ -632,6 +632,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (mPassword.equals(loggedInUser.getPassword())) {
                             toast = Toast.makeText(getApplicationContext(), "Successful Login", Toast.LENGTH_SHORT);
                             toast.show();
+                            System.out.println("fuck offf");
+                            Intent i = new Intent(getApplicationContext(), OfflineMainActivity.class);
+                            i.putExtra("username",loggedInUser.getUsername());
+                            startActivity(i);
+
+
                         } else {
                             toast = Toast.makeText(getApplicationContext(), "Failed Local Login", Toast.LENGTH_SHORT);
                             toast.show();

@@ -11,6 +11,16 @@ public class Password {
 
     private String password;
     private String account;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    private String username;
     private int id;
     
     public Password(){
@@ -23,6 +33,12 @@ public class Password {
         this.account = account;
         this.id = id;
     }
+    public Password(String account, String password,  String username) {
+        super();
+        this.password = password;
+        this.account = account;
+        this.username = username;
+    }
 
     public String getPassword(){
         return this.password;
@@ -31,7 +47,17 @@ public class Password {
         return id;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getAccount(){
         return this.account;
