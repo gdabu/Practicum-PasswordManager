@@ -125,9 +125,18 @@ public class UserDatabaseHandler extends SQLiteOpenHelper {
     public void deletePassword(int id){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PASSWORDS, KEY_ID + " = ?",
-                new String[] { String.valueOf(id) });
+                new String[]{String.valueOf(id)});
         db.close();
     }
+
+    public void deletePasswords(String username){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PASSWORDS, KEY_USERNAME + " = ?",
+                new String[] { String.valueOf(username) });
+        db.close();
+    }
+
+
 
     // Getting single contact
     public List<Password> getUserPasswords(String username) {

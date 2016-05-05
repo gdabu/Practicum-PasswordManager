@@ -97,14 +97,13 @@ public class OfflineMainActivity extends AppCompatActivity {
             case R.id.action_favorite:
                 try {
                     JSONObject commandData = new JSONObject();
-                    commandData.put("action", "CRUD");
-                    commandData.put("subaction", "READ");
+                    readPasswords();
 
 //                    mNetworkTask = new NetworkTask(commandData);
 //                    mNetworkTask.execute((Void) null);
 
 
-                } catch (JSONException e) {
+                } catch (Exception e) {
 
                     e.printStackTrace();
 

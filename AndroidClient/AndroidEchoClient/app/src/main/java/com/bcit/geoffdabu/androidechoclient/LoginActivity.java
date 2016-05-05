@@ -563,6 +563,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 // Switching to Register screen
                 Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
+                i.putExtra("username",mEmail);
                 startActivity(i);
 //                finish();
 
@@ -596,7 +597,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 commandData.put("action", "2FA_LOGIN");
                                 commandData.put("secret", secret);
 
-                                mNetworkTask = new NetworkTask(commandData);
+                                mNetworkTask = new NetworkTask(commandData, mEmail);
                                 mNetworkTask.execute((Void) null);
 
                             } catch (JSONException e) {
@@ -632,7 +633,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (mPassword.equals(loggedInUser.getPassword())) {
                             toast = Toast.makeText(getApplicationContext(), "Successful Login", Toast.LENGTH_SHORT);
                             toast.show();
-                            System.out.println("fuck offf");
                             Intent i = new Intent(getApplicationContext(), OfflineMainActivity.class);
                             i.putExtra("username",loggedInUser.getUsername());
                             startActivity(i);
@@ -667,10 +667,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final JSONObject sendJsonObject;
         private JSONObject recvJsonObject;
-
+        private String username = "";
 
         NetworkTask(JSONObject message) {
             this.sendJsonObject = message;
+        }
+
+        NetworkTask(JSONObject message, String username) {
+            this.sendJsonObject = message;
+            this.username = username;
         }
 
         @Override
@@ -700,6 +705,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (recvJsonObject.getString("action").equals("2FA_LOGIN")) {
                     if (recvJsonObject.getInt("status") == 200) {
                         Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
+                        i.putExtra("username", this.username);
                         startActivity(i);
 
                     } else {

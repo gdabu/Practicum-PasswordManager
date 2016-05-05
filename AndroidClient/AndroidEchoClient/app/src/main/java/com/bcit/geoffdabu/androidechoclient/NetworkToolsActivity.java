@@ -57,7 +57,10 @@ public class NetworkToolsActivity extends AppCompatActivity {
         // Create a new fragment and specify the planet to show based on position
         if(position == 0){
             finish();
+            Intent myIntent = getIntent(); // gets the previously created intent
             Intent i = new Intent(getApplicationContext(), OnlineMainActivity.class);
+            String username = myIntent.getStringExtra("username");
+            i.putExtra("username",username);
             startActivity(i);
         }else if (position == 2){
             finish();

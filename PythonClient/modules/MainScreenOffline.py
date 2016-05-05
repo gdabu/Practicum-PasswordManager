@@ -44,7 +44,7 @@ class MainScreenOffline(Screen):
         updateButton.bind(on_release=self.updatePasswords)
         deleteButton.bind(on_release=self.deletePasswords)
 
-        self.ids.password_button_container.add_widget(updateButton)
+        # self.ids.password_button_container.add_widget(updateButton)
         self.ids.password_button_container.add_widget(deleteButton)
 
     def loadPasswordList_UI(self):

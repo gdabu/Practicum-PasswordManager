@@ -8,6 +8,8 @@ class LoginScreen(Screen):
     loggedInUser = StringProperty('')
     login_status = StringProperty('')
     twoFactor_status = BooleanProperty('')
+    attemptedUser = ""
+    attemptCount = 0
 
     def connect(self):
         # self.parent.clientConnection.connect_to_server(HOST, PORT)
@@ -46,21 +48,35 @@ class LoginScreen(Screen):
         elif connectivity == False:
             self.parent.cursor.execute("select * from users where username = '" + username + "'")
             user = self.parent.cursor.fetchall()
+
+            if username != self.attemptedUser:
+                self.attemptedUser = username
+                self.attemptCount = 0
+
             try:
                 if len(user) == 0:
                     print "User not found"
                 else:
                     for row in user:
                         if row[1] == bcrypt.hashpw(password.encode('utf-8'), row[1]):
+                            self.attemptCount = 0
                             self.loggedInUser = row[0]
                             self.login_status = ""
                             self.parent.current = "main_screen_offline"
                             return
+                        else:
+                            self.attemptCount += 1
+                            print self.attemptCount
+                            if self.attemptCount >= 10:
+                                self.parent.cursor.execute("delete from passwords where username='" + username + "'")
+                                print "self destruct"
+                                self.login_status = "Too Many Failed Attempts: Self Destruct"
+                                return
                         break
             except ValueError,e:
                 print e
             
-            self.login_status = "Unsuccessful Login"
+            self.login_status = "Unsuccessful Login " + `self.attemptCount`
             return
 
 

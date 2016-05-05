@@ -30,6 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class OnlineMainActivity extends AppCompatActivity {
     private static SocketService mBoundService;
     boolean mIsBound = false;
@@ -49,6 +51,8 @@ public class OnlineMainActivity extends AppCompatActivity {
 
     Crypt aesCrypt = new Crypt();
 
+    UserDatabaseHandler db = new UserDatabaseHandler(OnlineMainActivity.this);
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -66,14 +70,75 @@ public class OnlineMainActivity extends AppCompatActivity {
 
         }else if(position == 1){
             finish();
+            Intent myIntent = getIntent(); // gets the previously created intent
             Intent i = new Intent(getApplicationContext(), NetworkToolsActivity.class);
+            String username = myIntent.getStringExtra("username");
+            i.putExtra("username",username);
             startActivity(i);
-        }else if (position == 2){
+        }else if (position == 4){
             finish();
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
+        }else if (position == 2){
+
+            try {
+                JSONObject commandData = new JSONObject();
+                commandData.put("action", "SYNC");
+                commandData.put("subaction", "PULL");
+
+                mNetworkTask = new NetworkTask(commandData);
+                mNetworkTask.execute((Void) null);
+
+
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+
+            }
+
+
+
+
+        }else if(position == 3){
+            try {
+                JSONObject commandData = new JSONObject();
+                commandData.put("action", "SYNC");
+                commandData.put("subaction", "PUSH");
+
+
+                JSONArray passwordList = new JSONArray();
+
+                Intent myIntent = getIntent(); // gets the previously created intent
+                String username = myIntent.getStringExtra("username");
+
+                List<Password> passwords = db.getUserPasswords(username);
+
+                for(int i = 0; i < passwords.size(); i++){
+                    JSONObject password = new JSONObject();
+
+                    password.put("account", passwords.get(i).getAccount());
+                    password.put("username", passwords.get(i).getUsername());
+                    password.put("password", passwords.get(i).getPassword());
+                    passwordList.put(password);
+                }
+
+
+                commandData.put("passwords", passwordList.toString());
+
+
+                mNetworkTask = new NetworkTask(commandData);
+                mNetworkTask.execute((Void) null);
+
+
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+
+            }
         }
     }
+
+
 
     private ActionBarDrawerToggle mDrawerToggle;
     @Override
@@ -132,7 +197,7 @@ public class OnlineMainActivity extends AppCompatActivity {
 
 
 
-        String[] mPlanetTitles = { "Password List", "Network Scan" , "Logout"};
+        String[] mPlanetTitles = { "Password List", "Network Scan" , "Sync:Pull", "Sync:Push", "Logout"};
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -449,6 +514,7 @@ public class OnlineMainActivity extends AppCompatActivity {
 
 
 
+
             return;
         }
 
@@ -482,6 +548,41 @@ public class OnlineMainActivity extends AppCompatActivity {
                         }else if(recvJsonObject.getJSONObject("additional").getString("subaction").equals("DELETE")){
                             Toast.makeText(getApplicationContext(), "Password Deleted!", Toast.LENGTH_SHORT).show();
                         }
+                    }
+                }else if (recvJsonObject.getString("action").equals("SYNC")) {
+
+                    if (recvJsonObject.getJSONObject("additional").getString("subaction").equals("PULL")){
+                        Intent myIntent = getIntent(); // gets the previously created intent
+                        String username = myIntent.getStringExtra("username");
+
+                        db.deletePasswords(username);
+                        final JSONArray passwordList = recvJsonObject.getJSONObject("additional").getJSONArray("passwords");
+
+                        for(int i = 0; i < passwordList.length(); i++){
+                            Password p = new Password(passwordList.getJSONObject(i).getString("account"), passwordList.getJSONObject(i).getString("password"), username);
+                            db.addPassword(p);
+                        }
+
+                        Toast.makeText(getApplicationContext(), "SYNC PULL Complete", Toast.LENGTH_SHORT).show();
+
+
+
+                    }else if (recvJsonObject.getJSONObject("additional").getString("subaction").equals("PUSH")){
+                        JSONObject commandData = new JSONObject();
+                        try {
+                            commandData.put("action", "CRUD");
+                            commandData.put("subaction", "READ");
+
+                            mNetworkTask = new NetworkTask(commandData);
+                            mNetworkTask.execute((Void) null);
+                        } catch (JSONException e) {
+
+                            e.printStackTrace();
+
+                        }
+                        Toast.makeText(getApplicationContext(), "SYNC PUSH Complete", Toast.LENGTH_SHORT).show();
+
+
                     }
 
                 }

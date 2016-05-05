@@ -20,4 +20,6 @@
     <string name="title_activity_online_main">OnlineMainActivity</string>
     <string name="title_activity_network_tools">NetworkTools</string>
     <string name="title_activity_registration">RegistrationActivity</string>
+
+
 </resources>

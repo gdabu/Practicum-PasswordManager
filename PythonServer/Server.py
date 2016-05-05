@@ -156,11 +156,12 @@ class Server():
                     
                     # TODO : set failedLoginCount max in config file
                     # set block duration in config file
-                    if failedLoginCount == 5:
+                    if failedLoginCount >= 5:
                         self.sendFormattedJsonMessage(clientsock, "LOGIN", 403, "LOGIN Unsuccessfull: TOO MANY FAILED ATTEMPTS, YOU WILL BE TEMPORARILY BANNED")
                         logger.warn('Blocking IP: %s', clientsock.getsockname())
                         blockIp(addr[0], 5)
                         failedLoginCount = 0
+                        break
 
                     continue
 
